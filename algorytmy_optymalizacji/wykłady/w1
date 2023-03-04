@@ -1,0 +1,26 @@
+# Optymalizacja
+- maksymalizacja profitu
+- minimalizacja kosztu
+### Przykłady
+- ścieżka w grafie przechodząca przez ustalone krawędzie
+- czasy rozpoczęcia i zakońćzenia zadań (kolejkowanie)
+- przepustowość krawędzi (kanały sieci komunikacyjnych)
+- ograniczona dostępnść zasoby
+- podciąg musi być rosnący
+
+## Problem Optymalizacyjny
+Określamy:
+- zmienne decyzyjne (desicion variables) tworzą rozwiązanie problemu
+- funkcja celu (objective function) funkcja zmiennych decyzyjnych
+- ograniczenia (constraints) dziedzina zmiennych decyzyjnych 
+
+Dzielimy problemy optymalizacyjne ze względu na dizdzinę zmiennych decyzyjnych na:
+- problemy  optyalizacjne ciągłe 
+- problemy optymalizacyjne dyskretne 
+
+
+Egzemplacrz problemu optymalizacyjnego to para I = (F,f), gdzie
+F jest zbiorem roziwązań dopuszczalnych (feasible solutions) to jest zagadka nie rozwiązanie. może nie mieć rozwiązania optymalnego
+
+Problem optymalizacyjny jest zbiorem egzamplarzy problem np.
+PROBLEM najkrótrzej ścieżki, egzemplarz na danym grafie
