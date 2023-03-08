@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">zad1Java</string>
+    <string name="gameTitle">Superowa giera</string>
+    <string name="gameInstruction">Wybierz większą liczbę</string>
+    <string name="gamePoints">Punkty: %d</string>
+    <string name="left_button">LEFT_BUTTON</string>
+    <string name="right_button">RIGHT_BUTTON</string>
+</resources>
