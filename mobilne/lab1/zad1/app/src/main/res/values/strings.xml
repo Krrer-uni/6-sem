@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">zad1</string>
+    <string name="kozak_giera">Kozak Giera</string>
+    <string name="number_left">number_Left</string>
+    <string name="number_right">number_right</string>
+    <string name="points_string">Points: %d</string>
+    <string name="pick_bigger_number">Pick bigger number</string>
+</resources>
