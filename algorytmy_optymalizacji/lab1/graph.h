@@ -15,13 +15,14 @@
 #include <boost/algorithm/string/classification.hpp>
 
 class Graph{
-  size_t verticies_size;
-  std::vector<std::list<uint8_t>> verticies;
+  const size_t verticies_size;
   bool isDirected;
 
  public:
+  std::vector<std::list<size_t>> verticies;
   Graph(size_t verticies_size, bool isDirected);
   void addEdge(size_t source, size_t dest);
+  size_t getSize() const;
 };
 
 std::shared_ptr<Graph> readGraphFromFile(std::string filename);

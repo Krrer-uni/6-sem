@@ -5,11 +5,17 @@
 #include "graph.h"
 Graph::Graph(size_t verticies_size, bool isDirected) :
     verticies_size(verticies_size),
-    verticies(verticies_size),
+    verticies(verticies_size+1),
     isDirected(isDirected) {}
 
 void Graph::addEdge(size_t source, size_t dest) {
   verticies[source].push_back(dest);
+  if(isDirected){
+    verticies[dest].push_back(source);
+  }
+}
+size_t Graph::getSize() const {
+  return verticies_size;
 }
 
 std::shared_ptr<Graph> readGraphFromFile(std::string filename){
