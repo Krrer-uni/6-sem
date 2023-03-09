@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">SuperKozakGiera</string>
+    <string name="points_text">Points %d</string>
+    <string name="points_over_50_text">%d!</string>
+    <string name="points_over_100_text">%d\n!!!</string>
+    <string name="restart">Restart</string>
+    <string name="tapButtonText">TAP ZONE</string>
+    <string name="titleText">Tap the circle</string>
+    <string name="time_counter">time_counter</string>
+    <string name="timerFormat">%.2f</string>
+</resources>
