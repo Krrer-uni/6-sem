@@ -10,12 +10,21 @@ Graph::Graph(size_t verticies_size, bool isDirected) :
 
 void Graph::addEdge(size_t source, size_t dest) {
   verticies[source].push_back(dest);
-  if(isDirected){
+  if(!isDirected){
     verticies[dest].push_back(source);
   }
 }
 size_t Graph::getSize() const {
   return verticies_size;
+}
+std::vector<std::list<size_t>> Graph::transpose() const {
+  std::vector<std::list<size_t >>  transposed_graph(verticies.size());
+  for (int i = 1; i < getSize()+1; i++) {
+    for (const auto & vert : verticies[i]) {
+        transposed_graph[vert].push_back(i);
+    }
+  }
+  return transposed_graph;
 }
 
 std::shared_ptr<Graph> readGraphFromFile(std::string filename){
@@ -31,7 +40,9 @@ std::shared_ptr<Graph> readGraphFromFile(std::string filename){
     return nullptr;
   }
   getline(graphFile,buffer);
-  if(buffer == "D\r"){
+  auto special_char_pos = std::find(buffer.cbegin(), buffer.cend(), '\r');
+  if(special_char_pos != buffer.cend()) buffer.erase(special_char_pos);
+  if(buffer == "D"){
     isDirected = true;
   } else{
     isDirected = false;
@@ -48,6 +59,6 @@ std::shared_ptr<Graph> readGraphFromFile(std::string filename){
     boost::split(words,buffer, boost::is_any_of(" "));
     graph->addEdge(std::stoi(words[0]), std::stoi(words[1]));
   }
-
+  graphFile.close();
   return graph;
 }

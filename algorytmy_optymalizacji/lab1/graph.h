@@ -23,6 +23,7 @@ class Graph{
   Graph(size_t verticies_size, bool isDirected);
   void addEdge(size_t source, size_t dest);
   size_t getSize() const;
+  std::vector<std::list<size_t>> transpose() const;
 };
 
 std::shared_ptr<Graph> readGraphFromFile(std::string filename);
