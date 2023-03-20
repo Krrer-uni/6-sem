@@ -40,8 +40,7 @@
                 </div>
                 <img src="../res/lidar.png" alt="my-image">
                 <div class="code-snippet">
-                    <pre>  
-    double_tuple acc{.0, .0, .0, .0, .0, .0, .0};
+                    <pre>   double_tuple acc{.0, .0, .0, .0, .0, .0, .0};
     std::tie(x_1, x_2, x_3, x_4, yx_2, yx_1, y) = std::accumulate(
         Cone.points.cbegin(),
         Cone.points.cend(),
@@ -60,7 +59,7 @@
                 std::get<6>(acc) + y};
             return a;
         });
-    auto n = static_cast<double>(Cone.points.size());</pre>
+    auto n = static_cast&lt;double&gt;(Cone.points.size());</pre>
                 </div>
             </li>
         </ul>
