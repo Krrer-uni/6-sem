@@ -22,7 +22,7 @@ int main() {
     }
     if(graph->getSize() < 200){
       for (const auto &vert : topological_order) {
-//        std::cout << vert << "\n";
+        std::cout << vert << "\n";
       }
     }
 
