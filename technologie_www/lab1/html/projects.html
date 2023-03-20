@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<link href="../style.css" rel="stylesheet" type="text/css" />
+<head>
+    <meta charset="UTF-8">
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wojciech Rymer</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo-containter">
+            <h1>Wojciech Rymer</h1>
+            <hr> 
+            <h2>projects</h2>       
+        </div>
+
+        <nav>
+            <ul class="nav-links">
+                <li ><a class="nav-link" href="../index.html">about me</a></li>
+                <li ><a class="nav-link" href="projects.html">projects</a></li>
+                <li ><a class="nav-link" href="interests.html">interests</a></li>
+                <li ><a class="nav-link" href="hobby.html">hobby</a></li>
+            </ul>
+        </nav>
+
+    </header>
+
+    <main>
+        <ul class="project-list">
+            <li class="project">    
+                <h2 class="project-name">Lidar Perception System</h2>             
+                
+                <div class="project-desc">
+                    
+                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere temporibus cumque ipsam ex eius alias a ipsum quam voluptatibus voluptatem nesciunt quibusdam aspernatur nemo suscipit aperiam eum, quo in animi nostrum optio laboriosam. Distinctio quaerat nihil facilis, deserunt cum et sint quo ut, vero consequuntur velit voluptate tempora necessitatibus voluptates! 
+                    </p>
+                </div>
+                <img src="../res/lidar.png" alt="my-image">
+                <div class="code-snippet">
+                    <pre>  
+    double_tuple acc{.0, .0, .0, .0, .0, .0, .0};
+    std::tie(x_1, x_2, x_3, x_4, yx_2, yx_1, y) = std::accumulate(
+        Cone.points.cbegin(),
+        Cone.points.cend(),
+        acc,
+        [](double_tuple acc,
+            pcl::PointXYZI point) {
+            double x = point.x;
+            double y = point.y;
+            double_tuple a{
+                std::get<0>(acc) + x,
+                std::get<1>(acc) + x * x,
+                std::get<2>(acc) + x * x * x,
+                std::get<3>(acc) + x * x * x * x,
+                std::get<4>(acc) + y * x * x,
+                std::get<5>(acc) + y * x,
+                std::get<6>(acc) + y};
+            return a;
+        });
+    auto n = static_cast<double>(Cone.points.size());</pre>
+                </div>
+            </li>
+        </ul>
+    </main>
+
+</body>
+
+</html>
