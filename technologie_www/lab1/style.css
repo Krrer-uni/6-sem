@@ -127,6 +127,7 @@ img {
 .project > img {
   height: auto;
   width: auto;
+  max-height: 40vh;
   border-radius: 1rem 1rem 0rem 0rem;
 }
 
@@ -251,18 +252,26 @@ footer{
   color: #F6E1C3;
 }
 
+footer > a{
+  
+}
+
 
 
 @media screen and (min-width: 700px) {
-  header, .nav-links{
+  header, .nav-links, .about-me, .photo-list, ul > .hobby{
     flex-direction: row;
   }
-
+  ul > .hobby:nth-child(2n){
+    flex-direction: row-reverse;
+  }
   .logo-containter{
     font-size: larger;
-    margin: auto;
-    padding: auto;
-    flex: 5;
+    flex: 1;
+  }
+
+  nav{
+    flex: 1;
   }
 
   .nav-links > li{
@@ -274,11 +283,6 @@ footer{
     font-size: 1.2rem;
   }
 
-  .about-me {
-    flex-direction: row;
-  }
-
-
   .about-me > p{
     padding: 4vw;
   }
@@ -289,13 +293,14 @@ footer{
     object-fit: cover;
   }
   
+  .hobby > img{
+    width: 40vw;
+  }
+
   .about-me-text > p{
     padding: 1vw;
   }
 
-  .photo-list{
-    flex-direction: row;
-  }
 
   .photo-list > li > img{
       width: 30vw;
@@ -305,7 +310,6 @@ footer{
   .photo-list > li > img:hover{
     transform: scale(1.5);
   }
-
 }
 
 

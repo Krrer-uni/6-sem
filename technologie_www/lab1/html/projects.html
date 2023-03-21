@@ -35,11 +35,7 @@
                 <h2 class="project-name">Lidar Perception System</h2>
 
                 <div class="project-desc">
-
-                    <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Facere temporibus cumque ipsam ex eius
-                        alias a ipsum quam voluptatibus voluptatem nesciunt quibusdam aspernatur nemo suscipit aperiam
-                        eum, quo in animi nostrum optio laboriosam. Distinctio quaerat nihil facilis, deserunt cum et
-                        sint quo ut, vero consequuntur velit voluptate tempora necessitatibus voluptates!
+                    <p>As a part of PWR Racing Team student organization, I am responsible for autonomous system for our car. My biggest contribution to that project is a LIDAR-based perception that allows our car to localize itself on a track. LIDAR is a sensor that shots lasers and based on return timing and laser orientation it produces a point cloud. From that the system detects cones and assigns them a color. This is a multistep pipeline, and must be reliable as it will be the only way for a fast moving racing car to orientate itself in the terrain.
                     </p>
                 </div>
                 <img src="../res/lidar.png" alt="my-image">
@@ -64,6 +60,74 @@ std::tie(x_1, x_2, x_3, x_4, yx_2, yx_1, y) = std::accumulate(
         return a;
     });
 auto n = static_cast&lt;double&gt;(Cone.points.size());</code></pre>
+                    <script src="prism.js"></script>
+                </div>
+            </li>
+            <li class="project">
+                <h2 class="project-name">Procedural Language compiler</h2>
+
+                <div class="project-desc">
+                    <p>On the 6th semester, the main project was to design and programme a compiler. This wasn't an easy task as it required immense ammount of theoretical knowledge combined with non trivial programming skills. I choosed the approach to precompile code to abstract syntax tree with blocks representing specific commands, like "for" loops and "if" statements. This allowed me to optimise my code without much sacrifice in terms of time efficiency. I used C++17, bison and flex. Code example is a program linker that translates etiquets to code addresses This project was graded by competition where fastest and most compact compiled code, compared to other students, was given more points. I placed 8th, and achieved grade of 5. 
+                    </p>
+                </div>
+                <img src="../res/kompilator.png" alt="my-image">
+                <div class="code-snippet">
+                    <pre><code class="language-javascript">void Compiler::translate_tags() {
+        int i = 0;
+        for (auto line = main_code.begin(); line != main_code.end(); line++, i++) {
+            std::string tag_msg;
+            while ((*line)[0] == '&') {
+            _tag_map[*line] = i;
+            std::string tag = (*line).substr(1);
+            tag_msg += " [ ^" + tag + " ] ";
+            line = main_code.erase(line);
+            }
+            line->append(compiler_log(tag_msg, 4));
+        }
+        for (auto line = main_code.begin(); line != main_code.end(); line++, i++) {
+            auto index_start = (*line).find("&");
+            if (index_start != std::string::npos) {
+            auto line_from_tag = (*line).substr(index_start);
+            auto tag = line_from_tag.substr(0, line_from_tag.find(" "));
+            auto tag_line = _tag_map[tag];
+            line->erase(index_start);
+            line->append(std::to_string(tag_line) + compiler_log(" [ JUMP ^" + tag.substr(1) + " ] ", 4));
+            }
+        }
+    }</code></pre>
+                    <script src="prism.js"></script>
+                </div>
+            </li>
+            <li class="project">
+                <h2 class="project-name">N-body simulation</h2>
+
+                <div class="project-desc">
+                    <p>As a summer project I decided to build a n-body simulation. This is a computational heavy task that simulates behaviour of bodies under gravity field induced by themselves. For rendering I used sdl library that is commonly used for game developement. To speed up the computations, I implemented quad trees that limited ammount of objects that i had to compute relations for. This limited computational complexity to O(nlog(n)) from O(n^2). 
+                    </p>
+                </div>
+                <img src="../res/gravity_ss.png" alt="my-image">
+                <div class="code-snippet">
+    <pre><code class="language-javascript">class quadTree{
+        public:
+        Node* root;
+        std::vector<Planet*> &source;
+        int threshold;
+        int treeMaxX,treeMinX,treeMaxY,treeMinY;
+        quadTree();
+        quadTree(int maxX, int minX, int maxY, int minY, std::vector<Planet*> *source_vec);
+        void makeTree(int threshold);
+        void cleanup();
+        void delete_elem();
+        
+        void updateTree();
+        void updateNode(Node* node);
+    
+        bool contains(Node* node, int index);
+        
+        private:
+        void insert(Node* node, int index);
+        void divide_node(Node* node);
+    };</code></pre>
                     <script src="prism.js"></script>
                 </div>
             </li>
