@@ -229,7 +229,6 @@ main{
 .code-snippet > pre {
   margin: 1rem;
   padding: 0;
-  font-size: 3;
   font-family: monospace;
   overflow-x: auto;
   overflow-y: auto;
@@ -254,7 +253,7 @@ footer{
 
 
 
-@media screen and (min-width: 600px) {
+@media screen and (min-width: 700px) {
   header, .nav-links{
     flex-direction: row;
   }
@@ -269,27 +268,47 @@ footer{
   .nav-links > li{
     width: auto;
     padding: 2px;
-    flex: 1;
   }
 
   .nav-link {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
   }
 
   .about-me {
     flex-direction: row;
   }
 
+
+  .about-me > p{
+    padding: 4vw;
+  }
+
   img {
     height: auto;
     width: 20vw;
+    object-fit: cover;
   }
   
+  .about-me-text > p{
+    padding: 1vw;
+  }
 
+  .photo-list{
+    flex-direction: row;
+  }
+
+  .photo-list > li > img{
+      width: 30vw;
+      height: 30vw;
+  }
+
+  .photo-list > li > img:hover{
+    transform: scale(1.5);
+  }
 
 }
 
 
-@media screen and (min-width: 700px) {
+@media screen and (min-width: 900px) {
 
 }
