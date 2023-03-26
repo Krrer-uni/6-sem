@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">minesweeper</string>
+    <string name="toogle_flag">flag mode</string>
+    <string name="toogle_reveal">reveal mode</string>
+    <string name="win_msg">YOU WIN</string>
+    <string name="lose_msg">YOU LOSE</string>
+    <string name="restart">RESTART GAME</string>
 </resources>

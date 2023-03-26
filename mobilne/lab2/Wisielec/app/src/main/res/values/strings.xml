@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">Wisielec</string>
+    <string name="editText">ENTER A LETTER</string>
+    <string name="guessWord">onomatopeja</string>
+    <string-array name="dictionary">
+        <item>onomatopeja</item>
+        <item>kaszel</item>
+        <item>ko</item>
+        <item>bohdanowym</item>
+        <item>bohdanowemu</item>
+        <item>bohdanowego</item>
+        <item>bohdanową</item>
+        <item>bohdanowej</item>
+        <item>bohdanowe</item>
+        <item>bohdanowa</item>
+        <item>bohdanowi</item>
+        <item>bohdziewicz</item>
+        <item>bohdziewiczach</item>
+        <item>bohdziewiczami</item>
+        <item>bohdziewiczom</item>
+        <item>bohdziewiczu</item>
+        <item>bohdziewiczem</item>
+        <item>bohdziewiczowi</item>
+        <item>bohdziewicza</item>
+        <item>bohdziewiczowie</item>
+        <item>bohdziewicze</item>
+        <item>bohdziewiczów</item>
+        <item>nieksięgowanym</item>
+        <item>nieksięgowanemu</item>
+        <item>nieksięgowanego</item>
+        <item>nieksięgowani</item>
+        <item>nieksięgowaną</item>
+        <item>nieksięgowanej</item>
+        <item>nieksięgowane</item>
+        <item>nieksięgowana</item>
+        <item>nieksięgujący</item>
+        <item>nieksięgującymi</item>
+        <item>nieksięgujących</item>
+        <item>nieksięgującym</item>
+        <item>nieksięgującemu</item>
+        <item>nieksięgującego</item>
+        <item>nieksięgujący</item>
+        <item>nieksięgującą</item>
+        <item>nieksięgującej</item>
+        <item>kompletacyjne</item>
+        <item>kompletacyjna</item>
+    </string-array></resources>
