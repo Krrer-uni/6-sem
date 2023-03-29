@@ -3,4 +3,4 @@ project(pietnastka)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(pietnastka main.cpp solver.h solver.cpp)
+add_executable(pietnastka main.cpp solver.h solver.cpp heuristics.cpp heuristics.h)

@@ -61,6 +61,12 @@ build CMakeFiles/pietnastka.dir/solver.cpp.o: CXX_COMPILER__pietnastka_Debug /ho
   OBJECT_DIR = CMakeFiles/pietnastka.dir
   OBJECT_FILE_DIR = CMakeFiles/pietnastka.dir
 
+build CMakeFiles/pietnastka.dir/heuristics.cpp.o: CXX_COMPILER__pietnastka_Debug /home/krrer/Repos/6-sem/sztuczna_inteligencja/pietnastka/heuristics.cpp || cmake_object_order_depends_target_pietnastka
+  DEP_FILE = CMakeFiles/pietnastka.dir/heuristics.cpp.o.d
+  FLAGS = -g -fdiagnostics-color=always -std=gnu++2a
+  OBJECT_DIR = CMakeFiles/pietnastka.dir
+  OBJECT_FILE_DIR = CMakeFiles/pietnastka.dir
+
 
 # =============================================================================
 # Link build statements for EXECUTABLE target pietnastka
@@ -69,7 +75,7 @@ build CMakeFiles/pietnastka.dir/solver.cpp.o: CXX_COMPILER__pietnastka_Debug /ho
 #############################################
 # Link the executable pietnastka
 
-build pietnastka: CXX_EXECUTABLE_LINKER__pietnastka_Debug CMakeFiles/pietnastka.dir/main.cpp.o CMakeFiles/pietnastka.dir/solver.cpp.o
+build pietnastka: CXX_EXECUTABLE_LINKER__pietnastka_Debug CMakeFiles/pietnastka.dir/main.cpp.o CMakeFiles/pietnastka.dir/solver.cpp.o CMakeFiles/pietnastka.dir/heuristics.cpp.o
   FLAGS = -g
   OBJECT_DIR = CMakeFiles/pietnastka.dir
   POST_BUILD = :
