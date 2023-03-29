@@ -2,8 +2,9 @@
 #include "solver.h"
 
 int main() {
-  auto b = getWinningBoard();
+  BoardEncoded b = getWinningBoard();
   printBoard(b);
-  auto x = get_available_moves(b);
+
+    auto a = get_available_moves(b);
   return 0;
 }

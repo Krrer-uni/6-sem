@@ -22,5 +22,5 @@ void printBoard(BoardEncoded board);
 std::vector<BoardEncoded> get_moves(BoardLiteral board);
 BoardEncoded getWinningBoard();
 bool isWinning(BoardEncoded board_encoded);
-std::vector<std::tuple<BoardEncoded,uint8_t>> get_available_moves(BoardEncoded board_encoded);
+std::vector<std::pair<BoardEncoded, uint8_t>> get_available_moves(BoardEncoded board_encoded);
 #endif //PIETNASTKA__SOLVER_H_
