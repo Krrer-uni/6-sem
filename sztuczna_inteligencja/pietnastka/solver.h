@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <deque>
 
-#define BOARD_SIZE 16
+#define BOARD_SIZE 9
 
 typedef std::array<char8_t, BOARD_SIZE> BoardLiteral;
 typedef uint64_t BoardEncoded;

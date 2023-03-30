@@ -60,8 +60,8 @@ void printBoard(BoardEncoded board) {
 
 BoardEncoded getWinningBoard() {
   BoardLiteral new_board = BoardLiteral();
-  std::copy(boost::counting_iterator(0), boost::counting_iterator(BOARD_SIZE), new_board.begin());
-  std::reverse(new_board.begin(), new_board.end());
+  std::copy(boost::counting_iterator(1), boost::counting_iterator(BOARD_SIZE), new_board.begin());
+  new_board.back() = 0;
   return encode(new_board);
 }
 
@@ -174,4 +174,23 @@ bool is_valid_solution(const std::deque<uint8_t>& moves, BoardLiteral instance){
     std::cout << '\n';
   }
   return encode(board) == getWinningBoard();
+}
+
+bool is_solvable(BoardLiteral instance) {
+  const int kn = instance.size();
+  if(kn % 2 ==0){
+    
+  }
+  return false;
+}
+
+static uint find_inversions(BoardLiteral board){
+  uint inversions = 0;
+  for (int i = 0; i < board.size(); i++) {
+    for (int j = i + 1; j < board.size(); j++) {
+      if(board[i] > board[j]) inversions++;
+    }
+  }
+
+  return inversions;
 }
