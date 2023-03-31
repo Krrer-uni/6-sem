@@ -23,7 +23,7 @@ constexpr unsigned BOARD_EDGE = numberOfBits(BOARD_SIZE);
 typedef std::array<char8_t, BOARD_SIZE> BoardLiteral;
 typedef uint64_t BoardEncoded;
 
-std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std::function<uint(BoardEncoded)> rate_function);
+std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, const std::function<uint(BoardEncoded)>& rate_function);
 BoardLiteral decode(BoardEncoded encoded);
 BoardEncoded encode(BoardLiteral literal);
 BoardLiteral getBoard();

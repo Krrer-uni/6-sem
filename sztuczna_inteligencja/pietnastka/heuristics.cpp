@@ -22,9 +22,8 @@ uint manhattan(BoardEncoded board) {
   uint16_t eval = 0;
 
   for(int i = b.size()-1; i >= 0; --i){
-    uint x = std::abs(i - b[i]);
-    eval += x / BOARD_EDGE;
-    eval += x % BOARD_EDGE;
+    eval += std::abs(static_cast<int>(i/BOARD_EDGE - b[i]/BOARD_EDGE))*BOARD_EDGE;
+    eval += std::abs(static_cast<int>(i%BOARD_EDGE - b[i]%BOARD_EDGE));
   }
 
   return eval;

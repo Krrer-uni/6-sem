@@ -66,7 +66,7 @@ BoardEncoded getWinningBoard() {
   return encode(new_board);
 }
 
-std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std::function<uint(BoardEncoded)> rate_function) {
+std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, const std::function<uint(BoardEncoded)>& rate_function) {
 
   class Compare {  // compare class for tuples used in priority queue
    public:
@@ -87,12 +87,13 @@ std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std:
 
   BoardEncoded winningBoard = getWinningBoard();
   while (!to_be_explored.empty()) {
+//    std::cout << to_be_explored.size() << " " << explored.size() << "\n";
     auto [board, distance, heuristic, last_move] = to_be_explored.top();
     to_be_explored.pop();
 
     if (explored.contains(board)) continue;
     explored.insert({board, last_move});
-
+    auto board_literal = decode(board);
     if (board == winningBoard) {
       return {read_solution(explored, explored.at(board), winningBoard),explored.size()};  // return of function
     }
@@ -108,7 +109,6 @@ std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std:
 
   return {};
 }
-
 
 std::vector<std::pair<BoardEncoded, uint8_t>> get_available_moves(BoardEncoded board_encoded) {
   auto board_decoded = decode(board_encoded);
