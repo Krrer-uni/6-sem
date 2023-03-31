@@ -9,13 +9,21 @@
 #include <array>
 #include <unordered_map>
 #include <deque>
+#include <functional>
 
-#define BOARD_SIZE 9
+constexpr unsigned numberOfBits(unsigned x)
+{
+  return x < 2 ? x : 1+numberOfBits(x >> 1);
+}
+
+#define BOARD_SIZE 16
+
+constexpr unsigned BOARD_EDGE = numberOfBits(BOARD_SIZE);
 
 typedef std::array<char8_t, BOARD_SIZE> BoardLiteral;
 typedef uint64_t BoardEncoded;
 
-std::deque<u_int8_t> solve(BoardLiteral instance);
+std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std::function<uint(BoardEncoded)> rate_function);
 BoardLiteral decode(BoardEncoded encoded);
 BoardEncoded encode(BoardLiteral literal);
 BoardLiteral getBoard();
@@ -29,4 +37,5 @@ std::deque<uint8_t> read_solution(std::unordered_map<BoardEncoded, uint8_t>& exp
 bool is_valid_solution(const std::deque<uint8_t>& moves, BoardLiteral instance);
 
 bool is_solvable(BoardLiteral instance);
-#endif //PIETNASTKA__SOLVER_H_
+void make_solvable(BoardLiteral& board_literal);
+#endif  // PIETNASTKA__SOLVER_H_

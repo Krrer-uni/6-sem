@@ -10,7 +10,9 @@
 #include <iomanip>
 #include <unordered_map>
 #include <queue>
-#include "heuristics.h"
+#include <list>
+
+static uint find_inversions(BoardLiteral board);
 
 BoardLiteral decode(BoardEncoded encoded) {
   BoardLiteral board_literal;
@@ -28,15 +30,14 @@ BoardEncoded encode(BoardLiteral literal) {
     board_encoded += (static_cast<uint64_t>(cell) << shift);
     shift += 4;
   }
-
   return board_encoded;
 }
 
 BoardLiteral getBoard() {
   static auto rd = std::random_device{};
   static auto rng = std::default_random_engine{rd()};
-
   BoardLiteral new_board = BoardLiteral();
+
   std::copy(boost::counting_iterator(0), boost::counting_iterator(BOARD_SIZE), new_board.begin());
   std::swap(new_board.front(), new_board.back());
   std::shuffle(new_board.begin(), new_board.end() - 1, rng);
@@ -46,7 +47,7 @@ BoardLiteral getBoard() {
 
 void printBoard(BoardLiteral board) {
   auto padding = static_cast<int>(std::log10(BOARD_SIZE));
-  for (int i = 0; i < board.size(); i++) {
+  for (size_t i = 0; i < board.size(); i++) {
     std::cout << std::setw(padding + 1) << std::setfill(' ') << ((board[i] != 0) ? std::to_string(board[i]) : " ") << " ";
     if ((i + 1) % static_cast<int>(std::sqrt(BOARD_SIZE)) == 0) {
       std::cout << "\n";
@@ -65,28 +66,26 @@ BoardEncoded getWinningBoard() {
   return encode(new_board);
 }
 
-std::deque<u_int8_t> solve(BoardLiteral instance) {
+std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, std::function<uint(BoardEncoded)> rate_function) {
 
-  class Compare {
+  class Compare {  // compare class for tuples used in priority queue
    public:
-    bool operator()(std::tuple<BoardEncoded, uint16_t, uint16_t, uint8_t> a,
-                    std::tuple<BoardEncoded, uint16_t, uint16_t, uint8_t> b) {
+    bool operator()(std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t> a,
+                    std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t> b) {
       return std::get<1>(a) + std::get<2>(a) > std::get<1>(b) + std::get<2>(b);
     }
   };
 
-  std::priority_queue<std::tuple<BoardEncoded, uint16_t, uint16_t, uint8_t>,
-                      std::vector<std::tuple<BoardEncoded, uint16_t, uint16_t, uint8_t>>,
+  std::priority_queue<std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t>,
+                      std::deque<std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t>>,
                       Compare> to_be_explored;
-  auto f = naive;
   std::unordered_map<BoardEncoded, uint8_t> explored;
   to_be_explored.emplace(std::tuple(encode(instance),
                                     0,
-                                    f(encode(instance)),
+                                    rate_function(encode(instance)),
                                     0));
 
   BoardEncoded winningBoard = getWinningBoard();
-
   while (!to_be_explored.empty()) {
     auto [board, distance, heuristic, last_move] = to_be_explored.top();
     to_be_explored.pop();
@@ -95,21 +94,22 @@ std::deque<u_int8_t> solve(BoardLiteral instance) {
     explored.insert({board, last_move});
 
     if (board == winningBoard) {
-      return read_solution(explored, explored.at(board), winningBoard);  // return of function
+      return {read_solution(explored, explored.at(board), winningBoard),explored.size()};  // return of function
     }
 
     for (const auto &[state, move] : get_available_moves(board)) {
       if (!explored.contains(state)) {
-        to_be_explored.emplace(state, distance + 1, f(state), move);
+        to_be_explored.emplace(state, distance + 1, rate_function(state), move);
       }
     }
   }
 
-  std::cout << "COULD NOT FIND SOLUTION\n";
+  std::cout << "COULD NOT FIND SOLUTION\n" << explored.size() << "\n" << explored.contains(winningBoard) << "\n";
+
   return {};
 }
 
-// write eval that returns std::tuple<BoardEncoded, uint8_t movetogettoit>
+
 std::vector<std::pair<BoardEncoded, uint8_t>> get_available_moves(BoardEncoded board_encoded) {
   auto board_decoded = decode(board_encoded);
   auto iter_empty = std::find(board_decoded.begin(), board_decoded.end(), 0);
@@ -118,7 +118,6 @@ std::vector<std::pair<BoardEncoded, uint8_t>> get_available_moves(BoardEncoded b
   std::vector<std::pair<BoardEncoded, uint8_t>> available_moves;
 
   size_t board_dim = static_cast<int>(std::sqrt(BOARD_SIZE));
-
   if (empty_pos >= board_dim) {
     std::swap(board_decoded[empty_pos], board_decoded[empty_pos - board_dim]);
     available_moves.emplace_back(encode(board_decoded), board_decoded[empty_pos]);
@@ -148,10 +147,8 @@ std::deque<uint8_t> read_solution(std::unordered_map<BoardEncoded, uint8_t> &exp
                                   BoardEncoded winningBoard) {
   std::deque<uint8_t> solution;
   solution.push_front(last_move);
-
   BoardLiteral backtrack_board = decode(winningBoard);
   auto pos_empty = std::find(backtrack_board.begin(), backtrack_board.end(), 0);
-
   while (solution.front() != 0) {
     auto pos_front = std::find(backtrack_board.begin(), backtrack_board.end(), solution.front());
     std::swap(*pos_empty, *pos_front);
@@ -177,20 +174,21 @@ bool is_valid_solution(const std::deque<uint8_t>& moves, BoardLiteral instance){
 }
 
 bool is_solvable(BoardLiteral instance) {
-  const int kn = instance.size();
-  if(kn % 2 ==0){
-    
-  }
+  uint inversions = find_inversions(instance);
+  if(inversions %2 == 0) return true;
   return false;
+}
+void make_solvable(BoardLiteral& board_literal) {
+  std::swap(board_literal[0],board_literal[1]);
 }
 
 static uint find_inversions(BoardLiteral board){
   uint inversions = 0;
-  for (int i = 0; i < board.size(); i++) {
-    for (int j = i + 1; j < board.size(); j++) {
+  for (std::size_t i = 0; i < board.size() - 1; i++) {
+    for (std::size_t j = i + 1; j < board.size() - 1; j++) {
       if(board[i] > board[j]) inversions++;
     }
   }
-
   return inversions;
 }
+

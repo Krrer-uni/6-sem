@@ -8,5 +8,7 @@
 #include <cstdint>
 #include "solver.h"
 
-uint16_t naive(BoardEncoded board);
+uint naive(BoardEncoded board);
+uint manhattan(BoardEncoded board);
+
 #endif //PIETNASTKA__HEURISTICS_H_
