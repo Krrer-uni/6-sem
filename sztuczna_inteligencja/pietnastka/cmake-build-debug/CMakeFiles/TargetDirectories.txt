@@ -1,3 +1,0 @@
-/home/krrer/Repos/6-sem/sztuczna_inteligencja/pietnastka/cmake-build-debug/CMakeFiles/pietnastka.dir
-/home/krrer/Repos/6-sem/sztuczna_inteligencja/pietnastka/cmake-build-debug/CMakeFiles/edit_cache.dir
-/home/krrer/Repos/6-sem/sztuczna_inteligencja/pietnastka/cmake-build-debug/CMakeFiles/rebuild_cache.dir
