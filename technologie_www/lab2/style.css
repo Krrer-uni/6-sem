@@ -252,11 +252,6 @@ footer{
   color: #F6E1C3;
 }
 
-footer > a{
-  
-}
-
-
 
 @media screen and (min-width: 700px) {
   header, .nav-links, .about-me, .photo-list, ul > .hobby{

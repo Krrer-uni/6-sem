@@ -1,0 +1,81 @@
+header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: auto;
+    margin:auto;
+    align-items: center;
+    padding: 1rem 0px 0px 0px;
+    @include mq(medium){
+        flex-direction: row;
+    }
+
+    nav{
+        @include mq(medium){
+         flex:1;
+        }
+        .nav-links{
+            display: flex;
+            flex-direction: column;
+            background: red;
+            align-items: center;
+            margin: auto;
+            margin-top: 2em;
+            justify-content: space-around;
+            list-style: none;
+            background: $nav-color;
+            @include mq(medium){
+                flex-direction: row;
+            }
+        }
+    
+        li{
+            
+            height: auto;
+            width: 100vw;
+            text-align: center;
+            &:hover{
+                color: $nav-hover-color
+            }
+            @include mq(medium){
+                width: auto;
+                padding: 2px;
+            }
+        }
+    
+        a{
+            font-size: 2rem;
+            text-decoration: none;
+            flex: 1;
+            
+            &:hover{
+                color: $nav-link-font-color
+            }
+            @include mq(medium){
+                font-size: 1.2rem;
+            }
+        }
+    }
+}
+
+.logo-containter{
+    flex: 1;
+    display: flex;
+    text-align: end;
+    flex-direction: row;
+    justify-content: start;
+    @include mq(medium){
+        font-size: larger;
+        flex: 1;
+    }
+
+    h1 {
+        margin-right: 4vw;
+        flex: 1;
+    }
+    h2{
+        margin-left: 4vw;
+        text-align: start;
+        flex: 1;
+    }
+}
