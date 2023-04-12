@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">Calendar</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="event_name">EVENT_NAME</string>
+    <string name="event_time">EVENT_TIME</string>
+    <string name="add_event">Add Event</string>
 </resources>
