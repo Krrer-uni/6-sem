@@ -5,15 +5,18 @@
 #include <deque>
 #include <random>
 #include "solver.h"
+#include "heuristics.h"
 #include <boost/iterator/counting_iterator.hpp>
 #include <iostream>
 #include <iomanip>
 #include <unordered_map>
 #include <queue>
 #include <list>
+#include <set>
 
 static uint find_inversions(BoardLiteral board);
-
+template<class T, class S, class C>
+static S &Container(std::priority_queue<T, S, C> &q);
 BoardLiteral decode(BoardEncoded encoded) {
   BoardLiteral board_literal;
   for (auto &cell : board_literal) {
@@ -45,10 +48,35 @@ BoardLiteral getBoard() {
   return new_board;
 }
 
+BoardLiteral getBoard(unsigned moves) {
+  std::random_device rd;     // Only used once to initialise (seed) engine
+  std::mt19937 rng(rd());    // Random-number engine used (Mersenne-Twister in this case)
+
+  BoardLiteral backtrack_board = decode(getWinningBoard());
+  uint8_t last_move = 16;
+  auto pos_empty = std::find(backtrack_board.begin(), backtrack_board.end(), 0);
+  for (size_t i = 0; i < moves; i++) {
+    auto available_moves = get_available_moves(encode(backtrack_board));
+    std::uniform_int_distribution<uint8_t>
+        uni(0, available_moves.size() - 1); // Guaranteed unbiased
+    auto index = uni(rng);
+    auto [board, move] = available_moves[index];
+    if (move == last_move)
+      move = std::get<1>(available_moves[(index + 1) % available_moves.size()]);
+    auto pos_front = std::find(backtrack_board.begin(), backtrack_board.end(), move);
+    std::swap(*pos_empty, *pos_front);
+    pos_empty = pos_front;
+    last_move = move;
+  }
+
+  return backtrack_board;
+}
+
 void printBoard(BoardLiteral board) {
   auto padding = static_cast<int>(std::log10(BOARD_SIZE));
   for (size_t i = 0; i < board.size(); i++) {
-    std::cout << std::setw(padding + 1) << std::setfill(' ') << ((board[i] != 0) ? std::to_string(board[i]) : " ") << " ";
+    std::cout << std::setw(padding + 1) << std::setfill(' ')
+              << ((board[i] != 0) ? std::to_string(board[i]) : " ") << " ";
     if ((i + 1) % static_cast<int>(std::sqrt(BOARD_SIZE)) == 0) {
       std::cout << "\n";
     }
@@ -66,7 +94,8 @@ BoardEncoded getWinningBoard() {
   return encode(new_board);
 }
 
-std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, const std::function<uint(BoardEncoded)>& rate_function) {
+std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance,
+                                                     const std::function<uint8_t(BoardEncoded)> &rate_function) {
 
   class Compare {  // compare class for tuples used in priority queue
    public:
@@ -75,10 +104,10 @@ std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, cons
       return std::get<1>(a) + std::get<2>(a) > std::get<1>(b) + std::get<2>(b);
     }
   };
-
   std::priority_queue<std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t>,
                       std::deque<std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t>>,
                       Compare> to_be_explored;
+
   std::unordered_map<BoardEncoded, uint8_t> explored;
   to_be_explored.emplace(std::tuple(encode(instance),
                                     0,
@@ -91,21 +120,23 @@ std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance, cons
     auto [board, distance, heuristic, last_move] = to_be_explored.top();
     to_be_explored.pop();
 
-    if (explored.contains(board)) continue;
     explored.insert({board, last_move});
     auto board_literal = decode(board);
     if (board == winningBoard) {
-      return {read_solution(explored, explored.at(board), winningBoard),explored.size()};  // return of function
+      return {read_solution(explored, explored.at(board), winningBoard),
+              explored.size()};  // return of function
     }
 
     for (const auto &[state, move] : get_available_moves(board)) {
       if (!explored.contains(state)) {
-        to_be_explored.emplace(state, distance + 1, rate_function(state), move);
+        uint8_t x = rate_function(state);
+        to_be_explored.emplace(state, distance + 1, x, move);
       }
     }
   }
 
-  std::cout << "COULD NOT FIND SOLUTION\n" << explored.size() << "\n" << explored.contains(winningBoard) << "\n";
+  std::cout << "COULD NOT FIND SOLUTION\n" << explored.size() << "\n"
+            << explored.contains(winningBoard) << "\n";
 
   return {};
 }
@@ -155,15 +186,15 @@ std::deque<uint8_t> read_solution(std::unordered_map<BoardEncoded, uint8_t> &exp
     solution.push_front(explore_history.at(encode(backtrack_board)));
     pos_empty = pos_front;
   }
-
+  solution.pop_front();
   return solution;
 }
 
-bool is_valid_solution(const std::deque<uint8_t>& moves, BoardLiteral instance){
+bool is_valid_solution(const std::deque<uint8_t> &moves, BoardLiteral instance) {
   BoardLiteral board;
-  std::copy(instance.begin(),instance.end(),board.begin());
+  std::copy(instance.begin(), instance.end(), board.begin());
   auto pos_empty = std::find(board.begin(), board.end(), 0);
-  for(const auto& move :moves){
+  for (const auto &move : moves) {
     auto pos_move = std::find(board.begin(), board.end(), move);
     std::swap(*pos_empty, *pos_move);
     pos_empty = pos_move;
@@ -172,23 +203,36 @@ bool is_valid_solution(const std::deque<uint8_t>& moves, BoardLiteral instance){
   }
   return encode(board) == getWinningBoard();
 }
-
+ /// tutaj coś się pierdoli
 bool is_solvable(BoardLiteral instance) {
   uint inversions = find_inversions(instance);
-  if(inversions %2 == 0) return true;
+  int board_dim = static_cast<int>(std::sqrt(BOARD_SIZE));
+  auto zero_pos = std::distance(instance.begin(), std::find(instance.begin(), instance.end(), 0));
+  if ((inversions+(board_dim - zero_pos/board_dim)) % 2 == 0) return true;
   return false;
 }
-void make_solvable(BoardLiteral& board_literal) {
-  std::swap(board_literal[0],board_literal[1]);
+
+void make_solvable(BoardLiteral &board_literal) {
+  std::swap(board_literal[0], board_literal[1]);
 }
 
-static uint find_inversions(BoardLiteral board){
+static uint find_inversions(BoardLiteral board) {
   uint inversions = 0;
-  for (std::size_t i = 0; i < board.size() - 1; i++) {
-    for (std::size_t j = i + 1; j < board.size() - 1; j++) {
-      if(board[i] > board[j]) inversions++;
+  for (std::size_t i = 0; i < board.size(); i++) {
+    for (std::size_t j = i + 1; j < board.size(); j++) {
+      if (board[i] == 0 || board[j] == 0) continue;
+      if (board[i] > board[j]) inversions += 1;
     }
   }
   return inversions;
 }
 
+template<class T, class S, class C>
+static S &Container(std::priority_queue<T, S, C> &q) {
+  struct HackedQueue : private std::priority_queue<T, S, C> {
+    static S &Container(std::priority_queue<T, S, C> &q) {
+      return q.*&HackedQueue::c;
+    }
+  };
+  return HackedQueue::Container(q);
+}
