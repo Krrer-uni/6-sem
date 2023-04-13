@@ -11,6 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
         <TextView
+            android:id="@+id/event_list_title"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Events"

@@ -2,12 +2,13 @@ package mobliki.calendar
 
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnClickListener
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class EventListAdapter(private val dataSet: ArrayList<CalendarEvent>?) :
+class EventListAdapter(private val dataSet: ArrayList<CalendarEvent>?, private val eventClickListener: (position : Int) -> Unit) :
     RecyclerView.Adapter<EventListAdapter.ViewHolder>() {
     /**
      * Provide a reference to the type of views that you are using
@@ -40,6 +41,9 @@ class EventListAdapter(private val dataSet: ArrayList<CalendarEvent>?) :
         time.text = dataSet?.get(position)?.time ?: ""
         val name = viewHolder.event.findViewById<TextView>(R.id.event_name)
         name.text = dataSet?.get(position)?.name ?: ""
+        viewHolder.event.setOnClickListener{
+            eventClickListener(position)
+        }
     }
 
     // Return the size of your dataset (invoked by the layout manager)
