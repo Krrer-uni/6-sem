@@ -43,12 +43,13 @@ class EventList : Fragment() {
         val fragment = inflater.inflate(R.layout.fragment_event_list, container, false)
 
         listtext = fragment.findViewById(R.id.event_list_title)
-
         recyclerView = fragment.findViewById(R.id.event_list)
         recyclerView.layoutManager = LinearLayoutManager(fragment.context)
-
         adapter = EventListAdapter(eventData, this::eventClickListener)
         recyclerView.adapter = adapter
+
+//        if(event)
+
         changeDate("")
 
         val button = fragment.findViewById<Button>(R.id.add_event_button)
@@ -140,6 +141,12 @@ class EventList : Fragment() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+//        outState.putParcelableArrayList("event_data",events_storage)
+        outState.putString("date",date)
     }
 
 }

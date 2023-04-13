@@ -24,7 +24,7 @@ class CalendarDisplay : Fragment() {
         val fragment = inflater.inflate(R.layout.fragment_calendar_view, container, false)
         val calendar = fragment.findViewById<CalendarView>(R.id.calendar)
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
-            Toast.makeText(fragment.context, "$dayOfMonth.$month.$year",Toast.LENGTH_SHORT).show()
+//            Toast.makeText(fragment.context, "$dayOfMonth.$month.$year",Toast.LENGTH_SHORT).show()
             val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
             eventlist.changeDate("$dayOfMonth.${month+1}.$year")
         }
