@@ -11,23 +11,31 @@ import android.widget.CalendarView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import java.time.LocalDate
+import java.util.*
 
 
 class CalendarDisplay : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     var date = "${LocalDate.now().dayOfMonth}.${LocalDate.now().monthValue}.${LocalDate.now().year}"
+    var calendar_date : Long = 0
+    lateinit var calendar: CalendarView
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         val fragment = inflater.inflate(R.layout.fragment_calendar_view, container, false)
-        val calendar = fragment.findViewById<CalendarView>(R.id.calendar)
+        calendar = fragment.findViewById<CalendarView>(R.id.calendar)
+
+
+
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
 //            Toast.makeText(fragment.context, "$dayOfMonth.$month.$year",Toast.LENGTH_SHORT).show()
             val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
             eventlist.changeDate("$dayOfMonth.${month+1}.$year")
+            calendar_date = calendar.date
         }
+
         return fragment
     }
 
@@ -36,5 +44,17 @@ class CalendarDisplay : Fragment() {
         super.onStart()
         val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
         eventlist.changeDate(date)
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putLong("calendar_date", calendar.date)
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            calendar.setDate(savedInstanceState.getLong("calendar_date"),true,true)
+        }
     }
 }

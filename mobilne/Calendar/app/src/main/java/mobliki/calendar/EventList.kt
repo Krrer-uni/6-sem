@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Parcelable
 import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -145,9 +146,19 @@ class EventList : Fragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-//        outState.putParcelableArrayList("event_data",events_storage)
+        outState.putSerializable("event_data",events_storage)
         outState.putString("date",date)
     }
 
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            events_storage = savedInstanceState.getSerializable("event_data") as HashMap<String, ArrayList<CalendarEvent>>
+            date = savedInstanceState.getString("date").toString()
+        }
+    }
 }
+
+
 
