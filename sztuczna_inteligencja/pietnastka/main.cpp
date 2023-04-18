@@ -2,32 +2,34 @@
 #include <cassert>
 #include "solver.h"
 #include "heuristics.h"
-int main() {
-  BoardLiteral b = getBoard();
-//  BoardEncoded d = encode(b);
-//  BoardLiteral b =  {1,  2,  3,  4,
-//  9,  5,  7,  8,
-//  0, 6, 10,  11,
-//  13, 14, 15, 12};
-//
-//BoardEncoded d = 853860024066471105;
-//BoardLiteral b = decode(d);
-  printBoard(b);
-  if(!is_solvable(b)){
-//    make_solvable(b);
-    std::cout << "nie da się rozwiązać\n";
-    return 0;
-  }
-  auto [moves,searched] = solve(b, manhattan);
-  assert(is_valid_solution(moves,b)==true);
-    for(const auto& move : moves){
-      std::cout << (uint16_t)move << " ";
-    }
-  std::cout <<  "\n";
-  std::cout << moves.size() << " " << searched << "\n";
+#include <vector>
+#include <fstream>
 
-//  std::tie(moves,searched) = solve(b, manhattan);
-//  std::cout << moves.size() << " " << searched << "\n";
+int main() {
+  ;
+
+  std::vector<int> no_moves_man;
+  std::vector<int> no_searched_man;
+  std::vector<int> no_moves_in;
+  std::vector<int> no_searched_in;
+
+  for(int i = 0 ; i < 20; i++){
+    std::ofstream myfile;
+    myfile.open ("example.csv", std::ios_base::app);
+    std::cout << i << std::endl;
+    BoardLiteral b = getBoard(21);
+    if(!is_solvable(b)){
+    make_solvable(b);
+    }
+    auto [moves_man,searched_man] = solve(b, manhattan);
+    no_moves_man.push_back(moves_man.size());
+    no_searched_man.push_back(searched_man);
+    auto [moves_in,searched_in] = solve(b, naive);
+    no_moves_in.push_back(moves_in.size());
+    no_searched_in.push_back(searched_in);
+    myfile << ","<< moves_man.size() << ","<< searched_man << ","<< moves_in.size() << "," << searched_man << std::endl  ;
+    myfile.close();
+  }
 
 
   return 0;
