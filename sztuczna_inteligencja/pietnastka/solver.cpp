@@ -101,6 +101,8 @@ std::tuple<std::deque<u_int8_t>, unsigned int> solve(BoardLiteral instance,
    public:
     bool operator()(std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t> a,
                     std::tuple<BoardEncoded, uint8_t, uint8_t, uint8_t> b) {
+      if((std::get<1>(a) + std::get<2>(a)) == (std::get<1>(b) + std::get<2>(b)))
+        return std::get<2>(a) > std::get<2>(b);
       return std::get<1>(a) + std::get<2>(a) > std::get<1>(b) + std::get<2>(b);
     }
   };
@@ -208,7 +210,8 @@ bool is_solvable(BoardLiteral instance) {
   uint inversions = find_inversions(instance);
   int board_dim = static_cast<int>(std::sqrt(BOARD_SIZE));
   auto zero_pos = std::distance(instance.begin(), std::find(instance.begin(), instance.end(), 0));
-  if ((inversions+(board_dim - zero_pos/board_dim)) % 2 == 0) return true;
+  int zero_row = board_dim - zero_pos/board_dim;
+  if ((inversions+zero_row )% 2 == 1) return true;
   return false;
 }
 
