@@ -52,3 +52,4 @@ for p in products
     println("x[$p] = $(value(x[p]))")
 end
 println("Objective function value: $(objective_value(model))")
+println(model)

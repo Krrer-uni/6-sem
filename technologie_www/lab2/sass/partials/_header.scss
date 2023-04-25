@@ -3,78 +3,90 @@ header{
     flex-direction: column;
     justify-content: space-around;
     width: auto;
-    margin:auto;
+
     align-items: center;
     padding: 1rem 0px 0px 0px;
     @include mq(medium){
         flex-direction: row;
+        height: auto;
+        align-items: stretch;
     }
 
     nav{
+        display: flex;
+        flex-direction: column;
+        background: red;
+        justify-content: space-around;
+        align-items: stretch;
+        padding: 2em 0;
+        list-style: none;
+        background: $nav-color;
         @include mq(medium){
-         flex:1;
+            flex-direction: row;
+            padding: 0;
+            flex: 1;
         }
-        .nav-links{
-            display: flex;
-            flex-direction: column;
-            background: red;
-            align-items: center;
-            margin: auto;
-            margin-top: 2em;
-            justify-content: space-around;
-            list-style: none;
-            background: $nav-color;
-            @include mq(medium){
-                flex-direction: row;
-            }
-        }
+
     
-        li{
+        .nav-link{
             
-            height: auto;
-            width: 100vw;
             text-align: center;
+            align-self: stretch;
+            vertical-align: middle;
+            font-size: 2rem;
+            text-decoration: none;
+            flex: 1;
+            color: $nav-link-font-color;
             &:hover{
                 color: $nav-hover-color
             }
             @include mq(medium){
-                width: auto;
-                padding: 2px;
+                font-size: 1.4rem;
+                padding: 10%  0 0 0;
             }
         }
-    
-        a{
-            font-size: 2rem;
-            text-decoration: none;
-            flex: 1;
-            
-            &:hover{
-                color: $nav-link-font-color
-            }
-            @include mq(medium){
-                font-size: 1.2rem;
-            }
+    }
+
+    .hamburger{
+        position: fixed;
+        z-index: 100;
+        top: 1rem;
+        right: 1rem;
+        border-width: 0px;
+        border-radius: 1rem;
+        size: 2rem 2rem;
+        background-color: $foooter-main-color;
+        color: $nav-color;
+        padding: 14px;
+        font-size: 30px;
+        text-decoration: none;
+        display: block;;
+        @include mq(medium){
+            display: none;
+          
         }
+    }
+
+    .closeIcon{
+        display: none;
     }
 }
 
 .logo-containter{
-    flex: 1;
     display: flex;
     text-align: end;
-    flex-direction: row;
-    justify-content: start;
+
     @include mq(medium){
         font-size: larger;
         flex: 1;
     }
 
     h1 {
-        margin-right: 4vw;
+        margin: 4vw;
         flex: 1;
     }
     h2{
-        margin-left: 4vw;
+        margin: 4vw;
         text-align: start;
         flex: 1;
     }

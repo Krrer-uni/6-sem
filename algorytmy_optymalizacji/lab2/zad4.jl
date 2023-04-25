@@ -45,3 +45,4 @@ for i in 1:n
         end
     end
 end
+println(model)

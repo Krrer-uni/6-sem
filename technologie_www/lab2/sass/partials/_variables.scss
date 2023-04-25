@@ -1,15 +1,15 @@
 
 
-$background-color: #F6E1C3;
+$background-color: rgb(246, 225, 195);
 
 $nav-color:  #F6E1C3;
 $nav-hover-color: #f3cd98;
-$nav-link-font-color: #A84448;
+$nav-link-font-color: #d0798a;
 
 
 $section-color:lightsalmon;
 
-$photo-list-border-color: #A84448;
+$photo-list-border-color: rgb(168, 68, 72);
 
 
 $code-color: gray;
@@ -23,3 +23,11 @@ $breakpoints: (
   small: 580px,
   medium: 700px,
 );
+
+:export {
+  backgroundColor: $background-color;
+  navColor:  $nav-color;
+  navHoverColor: $nav-hover-color;
+  navLinkFontColor: $nav-link-font-color;
+
+}
