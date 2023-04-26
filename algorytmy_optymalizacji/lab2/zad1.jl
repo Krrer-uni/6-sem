@@ -43,3 +43,4 @@ for sup in suppliers, rec in recievers
     println(sup ,",",rec," = ",value(x[sup,rec]) )
 end
 println(sum( value(x[row.firma,rec]) .* row[rec] for row in eachrow(lotniska), rec in recievers))
+println(model)

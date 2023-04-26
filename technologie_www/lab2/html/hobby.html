@@ -7,6 +7,7 @@
     <meta name="robots" content="index,follow" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <title>Wojciech Rymer</title>
 </head>
 
@@ -18,16 +19,19 @@
             <h2>hobby</h2>
         </div>
 
-        <nav>
-            <ul class="nav-links">
-                <li><a class="nav-link" href="index.html">about me</a></li>
-                <li><a class="nav-link" href="projects.html">projects</a></li>
-                <li><a class="nav-link" href="interests.html">interests</a></li>
-                <li><a class="nav-link" href="hobby.html">hobby</a></li>
-            </ul>
+        <nav class="nav-links" id="nav-menu">
+                <a class="nav-link" href="index.html">about me</a>
+                <a class="nav-link" href="projects.html">projects</a>
+                <a class="nav-link" href="interests.html">interests</a>
+                <a class="nav-link" href="hobby.html">hobby</a>
+                <button class="hamburger">
+                    <i class="fa fa-bars"></i>
+                </button>
         </nav>
+        
+    <script src="../scripts/menu.js"></script>
     </header>
-
+    
     <main>
         <ul class="hobby-list">
             <li class="hobby">

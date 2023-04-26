@@ -75,3 +75,4 @@ while curr != goal
     end
 end
 println("Koszt ścieżki: ", objective_value(model))
+println(model)

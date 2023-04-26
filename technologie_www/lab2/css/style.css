@@ -12,68 +12,84 @@ body {
   display: flex;
   flex-direction: column; }
 
+:export {
+  backgroundColor: #f6e1c3;
+  navColor: #F6E1C3;
+  navHoverColor: #f3cd98;
+  navLinkFontColor: #d0798a; }
+
 header {
   display: flex;
   flex-direction: column;
   justify-content: space-around;
   width: auto;
-  margin: auto;
   align-items: center;
   padding: 1rem 0px 0px 0px; }
   @media only screen and (min-width: 700px) {
     header {
-      flex-direction: row; } }
-  @media only screen and (min-width: 700px) {
-    header nav {
-      flex: 1; } }
-  header nav .nav-links {
+      flex-direction: row;
+      height: auto;
+      align-items: stretch; } }
+  header nav {
     display: flex;
     flex-direction: column;
     background: red;
-    align-items: center;
-    margin: auto;
-    margin-top: 2em;
     justify-content: space-around;
+    align-items: stretch;
+    padding: 2em 0;
     list-style: none;
     background: #F6E1C3; }
     @media only screen and (min-width: 700px) {
-      header nav .nav-links {
-        flex-direction: row; } }
-  header nav li {
-    height: auto;
-    width: 100vw;
-    text-align: center; }
-    header nav li:hover {
-      color: #f3cd98; }
-    @media only screen and (min-width: 700px) {
-      header nav li {
-        width: auto;
-        padding: 2px; } }
-  header nav a {
-    font-size: 2rem;
+      header nav {
+        flex-direction: row;
+        padding: 0;
+        flex: 1; } }
+    header nav .nav-link {
+      text-align: center;
+      align-self: stretch;
+      vertical-align: middle;
+      font-size: 2rem;
+      text-decoration: none;
+      flex: 1;
+      color: #d0798a; }
+      header nav .nav-link:hover {
+        color: #f3cd98; }
+      @media only screen and (min-width: 700px) {
+        header nav .nav-link {
+          font-size: 1.4rem;
+          padding: 10%  0 0 0; } }
+  header .hamburger {
+    position: fixed;
+    z-index: 100;
+    top: 1rem;
+    right: 1rem;
+    border-width: 0px;
+    border-radius: 1rem;
+    size: 2rem 2rem;
+    background-color: #A84448;
+    color: #F6E1C3;
+    padding: 14px;
+    font-size: 30px;
     text-decoration: none;
-    flex: 1; }
-    header nav a:hover {
-      color: #A84448; }
+    display: block; }
     @media only screen and (min-width: 700px) {
-      header nav a {
-        font-size: 1.2rem; } }
+      header .hamburger {
+        display: none; } }
+  header .closeIcon {
+    display: none; }
 
 .logo-containter {
-  flex: 1;
   display: flex;
-  text-align: end;
-  flex-direction: row;
-  justify-content: start; }
+  text-align: end; }
   @media only screen and (min-width: 700px) {
     .logo-containter {
       font-size: larger;
       flex: 1; } }
   .logo-containter h1 {
-    margin-right: 4vw;
+    margin: 4vw;
     flex: 1; }
   .logo-containter h2 {
-    margin-left: 4vw;
+    margin: 4vw;
     text-align: start;
     flex: 1; }
 
@@ -91,7 +107,7 @@ html {
   overflow-x: clip; }
 
 body {
-  background: #F6E1C3; }
+  background: #f6e1c3; }
 
 .about-me, .hobby-list {
   display: flex;
@@ -152,7 +168,7 @@ body {
       height: auto;
       margin: auto;
       margin-top: 10px;
-      border-color: #A84448; }
+      border-color: #a84448; }
     .gallery .photo-list img {
       object-fit: fill;
       width: 80vw;
