@@ -13,7 +13,7 @@ import androidx.annotation.RequiresApi
 import java.time.LocalDate
 import java.util.*
 
-
+@RequiresApi(Build.VERSION_CODES.O)
 class CalendarDisplay : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     var date = "${LocalDate.now().dayOfMonth}.${LocalDate.now().monthValue}.${LocalDate.now().year}"
@@ -23,14 +23,12 @@ class CalendarDisplay : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
         val fragment = inflater.inflate(R.layout.fragment_calendar_view, container, false)
         calendar = fragment.findViewById<CalendarView>(R.id.calendar)
 
 
 
         calendar.setOnDateChangeListener { view, year, month, dayOfMonth ->
-//            Toast.makeText(fragment.context, "$dayOfMonth.$month.$year",Toast.LENGTH_SHORT).show()
             val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
             eventlist.changeDate("$dayOfMonth.${month+1}.$year")
             calendar_date = calendar.date
@@ -43,7 +41,6 @@ class CalendarDisplay : Fragment() {
     override fun onStart() {
         super.onStart()
         val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
-        eventlist.changeDate(date)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -3,6 +3,7 @@ package mobliki.calendar
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Parcelable
 import android.util.Log
@@ -13,13 +14,16 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import java.time.LocalDate
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 class EventList : Fragment() {
 
 
@@ -30,7 +34,7 @@ class EventList : Fragment() {
     lateinit var recyclerView: RecyclerView
     lateinit var listtext: TextView
     var eventData : ArrayList<CalendarEvent>? = ArrayList()
-    var date = ""
+    var date = "${LocalDate.now().dayOfMonth}.${LocalDate.now().monthValue}.${LocalDate.now().year}"
 
 
     val getContent = registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
@@ -49,9 +53,7 @@ class EventList : Fragment() {
         adapter = EventListAdapter(eventData, this::eventClickListener)
         recyclerView.adapter = adapter
 
-//        if(event)
-
-        changeDate("")
+        changeDate(date)
 
         val button = fragment.findViewById<Button>(R.id.add_event_button)
         button.setOnClickListener(){
