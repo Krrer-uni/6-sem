@@ -205,7 +205,7 @@ bool is_valid_solution(const std::deque<uint8_t> &moves, BoardLiteral instance) 
   }
   return encode(board) == getWinningBoard();
 }
- /// tutaj coś się pierdoli
+
 bool is_solvable(BoardLiteral instance) {
   uint inversions = find_inversions(instance);
   int board_dim = static_cast<int>(std::sqrt(BOARD_SIZE));

@@ -41,6 +41,10 @@ class CalendarDisplay : Fragment() {
     override fun onStart() {
         super.onStart()
         val eventlist = parentFragmentManager.findFragmentById(R.id.fragment_event_list) as EventList
+<<<<<<< Updated upstream
+=======
+//        eventlist.changeDate(date)
+>>>>>>> Stashed changes
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

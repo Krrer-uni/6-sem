@@ -1,13 +1,19 @@
-const PUZZLE_DIFFICULTY = 4;
+var PUZZLE_DIFFICULTY = 4;
 const PUZZLE_HOVER_TINT = '#037ffc';
-
+const PUZZLE_MAX_SIZE = 10;
+const PUZZLE_MIN_SIZE = 2;
 var _stage;
 var _canvas;
 
+var _max_img_size
 var _img;
 var _pieces;
 var _puzzleWidth;
 var _puzzleHeight;
+var _originalPieceWidth;
+var _originalPieceHeight;
+var _originalPuzzleWidth;
+var _originalPuzzleHeight;
 var _pieceWidth;
 var _pieceHeight;
 var _currentPiece;
@@ -18,17 +24,81 @@ var _availableMoves;
 
 var _mouse;
 
+function resetButtonStart(){
+    const reset_button = document.getElementById("reset");
+    const _input = document.getElementById("input")
+    const size_menu = document.getElementById("size_menu");
+
+    reset_button.innerHTML="STOP";
+
+
+    _input.style.visibility = "hidden"
+    size_menu.style.visibility = "hidden"
+
+    reset_button.onclick = () =>{
+        gameOver();
+    }
+    onImage()
+}
+
 function init() {
+    const reset_button = document.getElementById("reset");
+    const bigger_button = document.getElementById("bigger");
+    const smaller_button = document.getElementById("smaller");
+    const size_text = document.getElementById("size_text");
+    const _input = document.getElementById("input")
+    
+
+    function update_size() {
+        if (PUZZLE_DIFFICULTY > PUZZLE_MAX_SIZE) {
+            PUZZLE_DIFFICULTY = PUZZLE_MAX_SIZE;
+        }
+        if (PUZZLE_DIFFICULTY < PUZZLE_MIN_SIZE) {
+            PUZZLE_DIFFICULTY = PUZZLE_MIN_SIZE;
+        }
+        size_text.innerHTML = PUZZLE_DIFFICULTY;
+    }
+    bigger_button.addEventListener('click', () => {
+        PUZZLE_DIFFICULTY++;
+        update_size();
+    })
+    smaller_button.addEventListener('click', () => {
+        PUZZLE_DIFFICULTY--;
+        update_size();
+    })
+    _input.addEventListener("change", () => {
+        const file = input.files;
+        _img.src = file[0].name;
+        console.log(file[0])
+    })
+    reset_button.innerHTML="START";
+    reset_button.onclick =  resetButtonStart;
+
     _img = new Image();
     _img.addEventListener('load', onImage);
     _img.src = "car.png";
 }
 
 function onImage() {
+    _max_img_size = parseInt(document.body.clientWidth * 0.7)
+    _originalPieceWidth = Math.floor(_img.width / PUZZLE_DIFFICULTY)
+    _originalPieceHeight = Math.floor(_img.height / PUZZLE_DIFFICULTY)
+    _originalPuzzleWidth = _originalPieceWidth * PUZZLE_DIFFICULTY;
+    _originalPuzzleHeight = _originalPieceHeight * PUZZLE_DIFFICULTY;
+    if (_img.width > _max_img_size) {
+        _img.width = _max_img_size;
+    }
+    if (_img.height > _max_img_size) {
+        _img.height = _max_img_size;
+
+    }
     _pieceWidth = Math.floor(_img.width / PUZZLE_DIFFICULTY)
     _pieceHeight = Math.floor(_img.height / PUZZLE_DIFFICULTY)
     _puzzleWidth = _pieceWidth * PUZZLE_DIFFICULTY;
     _puzzleHeight = _pieceHeight * PUZZLE_DIFFICULTY;
+
+
+
     setCanvas();
     initPuzzle();
 }
@@ -46,7 +116,7 @@ function initPuzzle() {
     _mouse = { x: 0, y: 0 };
     _currentPiece = null;
     _currentDropPiece = null;
-    _stage.drawImage(_img, 0, 0, _puzzleWidth, _puzzleHeight, 0, 0, _puzzleWidth, _puzzleHeight);
+    _stage.drawImage(_img, 0, 0, _originalPuzzleWidth, _originalPuzzleHeight, 0, 0, _puzzleWidth, _puzzleHeight);
     createTitle("Click to Start Puzzle");
     buildPieces();
 }
@@ -73,13 +143,13 @@ function buildPieces() {
         piece.sx = xPos;
         piece.sy = yPos;
         _pieces.push(piece);
-        xPos += _pieceWidth;
-        if (xPos >= _puzzleWidth) {
+        xPos += _originalPieceWidth;
+        if (xPos >= _originalPuzzleWidth) {
             xPos = 0;
-            yPos += _pieceHeight;
+            yPos += _originalPieceHeight;
         }
     }
-    document.onmousedown = shufflePuzzle;
+    shufflePuzzle();
 }
 
 function shufflePuzzle() {
@@ -100,7 +170,7 @@ function shufflePuzzle() {
             _stage.fillStyle = "blue";
             _stage.fillRect(xPos, yPos, _pieceWidth, _pieceHeight);
         } else {
-            _stage.drawImage(_img, piece.sx, piece.sy, _pieceWidth, _pieceHeight, xPos, yPos, _pieceWidth, _pieceHeight);
+            _stage.drawImage(_img, piece.sx, piece.sy, _originalPieceWidth, _originalPieceHeight, xPos, yPos, _pieceWidth, _pieceHeight);
             _stage.strokeRect(xPos, yPos, _pieceWidth, _pieceHeight);
         }
         xPos += _pieceWidth;
@@ -109,7 +179,7 @@ function shufflePuzzle() {
             yPos += _pieceHeight;
         }
     }
-    for(i = 0; i < 200; i++){
+    for (i = 0; i < 200; i++) {
         let availableMoves = checkAvailableMoves();
         let randidx = Math.floor(Math.random() * availableMoves.length);
         piece = availableMoves[randidx];
@@ -121,8 +191,8 @@ function shufflePuzzle() {
         const tmpPiece = _emptyPiece;
         _emptyPiece = piece;
         piece = tmpPiece;
-    
-        _emptyPiecePos = _emptyPiece.xPos / _pieceWidth + _emptyPiece.yPos /_pieceHeight * PUZZLE_DIFFICULTY;
+
+        _emptyPiecePos = _emptyPiece.xPos / _pieceWidth + _emptyPiece.yPos / _pieceHeight * PUZZLE_DIFFICULTY;
     }
     _availableMoves = checkAvailableMoves();
     resetPuzzleAndCheckWin()
@@ -145,21 +215,21 @@ function showAvailableMoves(e) {
             _stage.fillStyle = "blue";
             _stage.fillRect(piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
         } else {
-            _stage.drawImage(_img, piece.sx, piece.sy, _pieceWidth, _pieceHeight, piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
+            _stage.drawImage(_img, piece.sx, piece.sy, _originalPieceWidth, _originalPieceHeight, piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
             _stage.strokeRect(piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
         }
     }
     let hoverPiece = checkPieceClicked();
     if (hoverPiece != null) {
         _availableMoves.forEach(piece => {
-             if(piece.sy == hoverPiece.sy && piece.sx == hoverPiece.sx){
+            if (piece.sy == hoverPiece.sy && piece.sx == hoverPiece.sx) {
                 _stage.save();
                 _stage.globalAlpha = .4;
                 _stage.fillStyle = PUZZLE_HOVER_TINT;
                 _stage.fillRect(piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
                 _stage.restore();
-             }
-            
+            }
+
         });
     }
 
@@ -203,7 +273,6 @@ function checkPieceClicked() {
     for (i = 0; i < _pieces.length; i++) {
         piece = _pieces[i];
         if (_mouse.x < piece.xPos || _mouse.x > (piece.xPos + _pieceWidth) || _mouse.y < piece.yPos || _mouse.y > (piece.yPos + _pieceHeight)) {
-            //PIECE NOT HIT
         }
         else {
             return piece;
@@ -222,13 +291,13 @@ function changePiece() {
     _emptyPiece = _currentPiece;
     _currentPiece = tmpPiece;
 
-    _emptyPiecePos = _emptyPiece.xPos / _pieceWidth + _emptyPiece.yPos /_pieceHeight * PUZZLE_DIFFICULTY;
+    _emptyPiecePos = _emptyPiece.xPos / _pieceWidth + _emptyPiece.yPos / _pieceHeight * PUZZLE_DIFFICULTY;
     _availableMoves = checkAvailableMoves();
     console.log(_emptyPiecePos)
     console.log(_availableMoves);
-    resetPuzzleAndCheckWin();   
+    resetPuzzleAndCheckWin();
 
-        console.log(_pieces)
+    console.log(_pieces)
 }
 
 function resetPuzzleAndCheckWin() {
@@ -242,7 +311,7 @@ function resetPuzzleAndCheckWin() {
             _stage.fillStyle = "blue";
             _stage.fillRect(piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
         } else {
-            _stage.drawImage(_img, piece.sx, piece.sy, _pieceWidth, _pieceHeight, piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
+            _stage.drawImage(_img, piece.sx, piece.sy, _originalPieceWidth, _originalPieceHeight, piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
             _stage.strokeRect(piece.xPos, piece.yPos, _pieceWidth, _pieceHeight);
         }
 
@@ -258,7 +327,30 @@ function gameOver() {
     document.onmousedown = null;
     document.onmousemove = null;
     document.onmouseup = null;
-    initPuzzle();
+
+    const reset_button = document.getElementById("reset");
+    const _input = document.getElementById("input")
+    const size_menu = document.getElementById("size_menu");
+
+    reset_button.style.visibility = "visible"
+    _input.style.visibility = "visible"
+    size_menu.style.visibility = "visible"
+    reset_button.innerHTML="START";
+
+    reset_button.onclick = ()=>{
+        const reset_button = document.getElementById("reset");
+        const _input = document.getElementById("input")
+        const size_menu = document.getElementById("size_menu");
+        reset_button.innerHTML="STOP";
+    
+    
+        _input.style.visibility = "hidden"
+        size_menu.style.visibility = "hidden"
+        reset_button.onclick = gameOver;
+
+        onImage();
+    }
+    // initPuzzle();
 }
 function shuffleArray(o) {
     for (var j, x, i = o.length; i; j = parseInt(Math.random() * i), x = o[--i], o[i] = o[j], o[j] = x);

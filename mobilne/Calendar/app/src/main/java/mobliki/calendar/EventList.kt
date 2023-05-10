@@ -65,7 +65,7 @@ class EventList : Fragment() {
 
     private fun eventClickListener(position :Int){
         val myIntent = Intent(view!!.context,CreationActivity::class.java)
-        myIntent.putExtra("date",date)
+        myIntent.putExtra("last_date", date)
         myIntent.putExtra("name", eventData?.get(position)?.name)
         myIntent.putExtra("time", eventData?.get(position)?.time)
 
@@ -76,7 +76,7 @@ class EventList : Fragment() {
     }
     private fun buttonListener(view: View?){
         val myIntent = Intent(view!!.context,CreationActivity::class.java)
-        myIntent.putExtra("date",date)
+        myIntent.putExtra("last_date",date)
         myIntent.putExtra("requestCode", CREATE_MODE)
         startActivityForResult(myIntent, CREATE_MODE)
 
@@ -110,6 +110,12 @@ class EventList : Fragment() {
     @Override
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        if (data != null) {
+            val last_date = data.getStringExtra("last_date")
+            if (last_date != null) {
+                changeDate(last_date)
+            }
+        }
         when(requestCode){
             CREATE_MODE -> {
                 when(resultCode){
@@ -157,7 +163,7 @@ class EventList : Fragment() {
         super.onViewStateRestored(savedInstanceState)
         if (savedInstanceState != null) {
             events_storage = savedInstanceState.getSerializable("event_data") as HashMap<String, ArrayList<CalendarEvent>>
-            date = savedInstanceState.getString("date").toString()
+//            date = savedInstanceState.getString("date").toString()
         }
     }
 }

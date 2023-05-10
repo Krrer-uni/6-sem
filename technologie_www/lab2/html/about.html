@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="../css/style.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="robots" content="index,follow" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>Wojciech Rymer</title>
+</head>
+
+<body>
+    <header>
+        <div class="logo-containter">
+            <h1>Wojciech Rymer</h1>
+            <hr>
+            <h2>hobby</h2>
+        </div>
+
+        <nav class="nav-links" id="nav-menu">
+            <button class="hamburger" onClick="handleHamburger()">
+                <i class="fa fa-bars"></i>
+            </button>
+            <noscript>
+                <a class="nav-link" href="index.html">about me</a>
+                <a class="nav-link" href="projects.html">projects</a>
+                <a class="nav-link" href="interests.html">interests</a>
+                <a class="nav-link" href="hobby.html">hobby</a>
+            </noscript>     
+        </nav>       
+        <script src="../scripts/menu.js"></script>
+    </header>
+
+    <main>
+        <article>
+            <section class="about-me">
+                <img src="../res/zdjęcie-strona.jpg" alt="my-image">
+                <div class="about-me-text">
+                    <h2 class="who-am-i-caption">Who am I?</h2>
+                    <p>Hi!, I am a 3rd year student of algorithmic computer science at Wrocław University of Technology. I come from Ostrów Wielkopolski and moved to my town of study this year. In free time I work on autonomous electric car as software developer, my niche there is perception and sensor fusion. I can't live without doing some kind of sport activity, mostly climbing, running or weightlifting. Traveling is also a huge part of my life and I always try capture best moment in photographs.  More info in tabs!
+                    </p>
+                </div>
+            </section>
+            <section class="gallery">
+                <h2>gallery</h2>
+                <ul class="photo-list" id="photo-list">
+                </ul>
+                <script src="../scripts/loadImage.js"></script>
+            </section>
+        </article>
+    </main>
+    <footer>
+        <ul>
+            <li>phone: +48 503 402 466 </li>
+            <li>email: wrymer2@gmail.com</li>
+            <li><a href="https://www.linkedin.com/in/wojciech-rymer/">linkedin</a></li>
+        </ul>
+    </footer>
+</body>
+
+</html>
