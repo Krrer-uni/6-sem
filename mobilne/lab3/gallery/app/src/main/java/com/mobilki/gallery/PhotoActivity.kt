@@ -2,6 +2,7 @@ package com.mobilki.gallery
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -19,11 +20,18 @@ class PhotoActivity : AppCompatActivity(), PhotoDetailsFragment.OnDataPass {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.photo_activity)
         window.decorView.apply { windowInsetsController.apply {  } }
-        photo = intent.getParcelableExtra<ImageHolder>("PHOTO_KEY" )
+        photo = intent.getParcelableExtra("PHOTO_KEY" )
+
         if (photo == null){
             Log.e("intent error", "given photo is null")
             finish()
         }
+        if(photo!!.isLocal){
+            val filename = intent.getStringExtra("PHOTO_BITMAP")
+            val stream = openFileInput(filename)
+            photo!!.bitmap = BitmapFactory.decodeStream(stream)
+        }
+
         val zoomed_photo_fragment = PhotoZoomFragment.newInstance(photo!!)
         val details_photo_fragment = PhotoDetailsFragment.newInstance(photo!!)
         supportFragmentManager.beginTransaction().replace(R.id.photoZoom,zoomed_photo_fragment)

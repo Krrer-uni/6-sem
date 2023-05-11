@@ -246,4 +246,5 @@
     <orderEntry type="library" scope="TEST" name="Gradle: io.coil-kt:coil:2.3.0@aar" level="project" />
     <orderEntry type="library" scope="TEST" name="Gradle: androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1@aar" level="project" />
   </component>
+  <component name="TestModuleProperties" production-module="gallery.app.main" />
 </module>

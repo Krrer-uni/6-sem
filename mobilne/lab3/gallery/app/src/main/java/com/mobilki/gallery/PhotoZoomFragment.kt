@@ -5,7 +5,15 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
 import coil.compose.AsyncImage
 
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -36,9 +44,14 @@ class PhotoZoomFragment : Fragment() {
         // Inflate the layout for this fragment
         return ComposeView(requireContext()).apply {
             setContent {
-                AsyncImage(model = photo_url?.url,
-                    contentDescription = "",
-                )
+                if(photo_url!!.isLocal){
+                    Image(photo_url!!.bitmap!!.asImageBitmap(),"", modifier = Modifier.aspectRatio(1f))
+                }else{
+                    AsyncImage(model = photo_url?.url,
+                        contentDescription = "",
+                    )
+                }
+
             }
         }
     }
