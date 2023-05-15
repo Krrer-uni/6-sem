@@ -37,6 +37,9 @@ class PriorityQueue {
     size_t id;
     int weight;
     bool operator<(Vertice const &vertice) const {
+      return this->weight < vertice.weight;
+    }
+    bool operator>(Vertice const &vertice) const {
       return this->weight > vertice.weight;
     }
   };
@@ -50,7 +53,13 @@ class PriorityQueue {
 
 class StdPriorityQueue : public PriorityQueue {
  private:
-  std::priority_queue<Vertice> priority_queue;
+  class vertcompare {
+   public:
+    bool operator()(Vertice a, Vertice b) {
+      return a.weight < b.weight;
+    };
+  };
+  std::priority_queue<Vertice, std::vector<Vertice>, vertcompare> priority_queue;
  public:
   StdPriorityQueue() {
     size = 0;
@@ -144,23 +153,37 @@ class DialPriorityQueue : public PriorityQueue {
 
 class RadixHeap : public PriorityQueue {
  private:
-  std::unordered_map<size_t, int> vert_map;
   struct container {
     size_t lower_bound;
-    std::list<Vertice> data;
+    size_t upper_bound;
+    std::list<Vertice> data = std::list<Vertice>();
     bool empty() const {
       return data.empty();
     }
-    Vertice top()  {
+    void erase(size_t id) {
+      std::erase_if(data, [id](Vertice vert) { return vert.id == id; });
+    }
+
+    Vertice top() {
       class vertcompare {
        public:
-        bool operator()(Vertice a, Vertice b){
-          return a.weight > b.weight; };
+        bool operator()(Vertice a, Vertice b) {
+          return a.weight < b.weight;
+        };
       };
       data.sort(vertcompare());
       return data.front();
     }
   };
+
+  void put(Vertice vertice) {
+    auto x = std::find_if(containers.begin(), containers.end(), [vertice](const container &c) {
+      return vertice.weight >= c.lower_bound && vertice.weight <= c.upper_bound;
+    });
+    assert(x != containers.end());
+    x->data.push_front(vertice);
+  }
+
   std::unordered_map<size_t, int> vert_weights;
   std::vector<container> containers;
   size_t C;
@@ -174,54 +197,186 @@ class RadixHeap : public PriorityQueue {
     this->cont_size = (size_t) (std::log2(C * n) + 1);
     this->size = 0;
     containers = std::vector<container>(cont_size);
-    containers[0].lower_bound = 0;
-    containers[1].lower_bound = 1;
-    for (auto x = containers.begin() - 2; x != containers.end(); x++) {
-      x->lower_bound = 2 * (x - 1)->lower_bound;
+    containers[0].lower_bound = containers[0].upper_bound = 0;
+    containers[1].lower_bound = containers[1].upper_bound = 1;
+    for (auto x = containers.begin() + 1; x < containers.end(); x++) {
+      x->lower_bound = (x - 1)->upper_bound + 1;
+      x->upper_bound = x->lower_bound * 2 - 1;
     }
   }
 
   void insert(Vertice vertice) override {
     assert(!vert_weights.contains(vertice.id));
     size++;
-    auto x = std::find_if(containers.begin(), containers.end(), [vertice](const container &c) {
-      return vertice.weight < c.lower_bound && !c.empty();
-    });
-    x--;
-    x->data.push_front(vertice);
+    put(vertice);
     vert_weights.insert({vertice.id, vertice.weight});
   }
 
   Vertice pop() override {
+    if (empty()) return {};
     size--;
     size_t curr_cont = 0;
     while (containers[curr_cont].data.empty()) {
       curr_cont++;
     }
-    if (containers[curr_cont].data.size() == 1) {
-      auto elem = containers[curr_cont].data.front();
-      containers[curr_cont].data.pop_front();
-      return elem;
-    } else {
+    if (containers[curr_cont].lower_bound != containers[curr_cont].upper_bound) {
       auto elem = containers[curr_cont].top();
       size_t new_lower_bound = elem.weight;
-      containers[0].lower_bound = new_lower_bound;
+      size_t new_upper_bound = containers[curr_cont].upper_bound;
+      int to_be_updated = std::ceil(std::log2(new_upper_bound - new_lower_bound + 1) + 1);
+      int i = -1;
       int p = 0;
-      for(int i = 0; i < curr_cont; i++){
-        containers[i].lower_bound = new_lower_bound +;
+      int last_upper_value = -1;
+      while (last_upper_value != new_upper_bound) {
+        i++;
+        p *= 2;
+        if (i == 0) {
+          containers[0].lower_bound = containers[0].upper_bound = last_upper_value =
+              new_lower_bound;
+          continue;
+        }
+        if (i == 1) {
+          containers[1].lower_bound = containers[1].upper_bound = last_upper_value =
+              containers[0].lower_bound + 1;
+          p = 1;
+          continue;
+        }
+        containers[i].lower_bound = std::min(containers[i - 1].upper_bound + 1, new_upper_bound);
+        containers[i].upper_bound = std::min(containers[i].lower_bound + p - 1, new_upper_bound);
+        last_upper_value = containers[i].upper_bound;
+
       }
+      i++;
+      while (i <= curr_cont) {
+        containers[i].upper_bound = 0;
+        containers[i].lower_bound = 0;
+        i++;
+      }
+
+      for (const auto &elem : containers[curr_cont].data) {
+        put(elem);
+      }
+      containers[curr_cont].data.clear();
+      curr_cont = 0;
     }
+    auto elem = containers[curr_cont].data.front();
+    containers[curr_cont].data.pop_front();
+    return elem;
   }
 
   void decrease_key(Vertice vertice) override {
+    assert(vert_weights.contains(vertice.id));
+    if (vert_weights.at(vertice.id) < vertice.weight)
+      return;
+    int past_weight = vert_weights.at(vertice.id);
+    auto x = std::find_if(containers.begin(), containers.end(), [past_weight](const container &c) {
+      return past_weight >= c.lower_bound && past_weight <= c.upper_bound;
+    });
+    x->erase(vertice.id);
+    put(vertice);
+    vert_weights[vertice.id] = vertice.weight;
 
+  }
+
+  void emplace(size_t id, int weight) override {
+    insert({id, weight});
+  }
+
+  bool empty() override {
+    return size == 0;
+  }
+};
+
+class BinaryHeap : public PriorityQueue {
+ private:
+  std::unordered_map<size_t, size_t> vert_map;
+  size_t capacity;
+  std::vector<Vertice> data;
+  size_t parent(size_t i) { return (i - 1) / 2; }
+
+  size_t left(size_t i) { return (2 * i + 1); }
+
+  size_t right(size_t i) { return (2 * i + 2); }
+
+  void heapify(size_t i) {
+    size_t l = left(i);
+    size_t r = right(i);
+    size_t smallest = i;
+    if (l < size && data[l] < data[i])
+      smallest = l;
+    if (r < size && data[r] < data[smallest])
+      smallest = r;
+    if (smallest != i) {
+      std::swap(data[i], data[smallest]);
+      std::swap(vert_map[data[i].id], vert_map[data[smallest].id]);
+
+      heapify(smallest);
+    }
+  }
+
+ public:
+
+  explicit BinaryHeap(size_t capacity) {
+    this->capacity = capacity;
+    this->size = 0;
+    data = std::vector<Vertice>(capacity);
+//    vert_map = std::unordered_map<size_t ,size_t >();
+  }
+
+  void insert(Vertice vertice) override {
+    size_t i = size;
+    size++;
+    data[i] = vertice;
+    vert_map[vertice.id] = i;
+    while (i != 0 && data[parent(i)] > data[i]) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+  };
+
+  Vertice pop() override {
+    if (size == 1) {
+      size--;
+      return data[0];
+    }
+
+    Vertice root = data[0];
+    vert_map.erase(data[0].id);
+
+    data[0] = data[size - 1];
+    vert_map[data[0].id] = 0;
+    size--;
+    heapify(0);
+
+    return root;
+  };
+
+  void decrease_key(Vertice vertice) override {
+    assert(vert_map.contains(vertice.id));
+    auto i = vert_map[vertice.id];
+    if (data[i].weight < vertice.weight)
+      return;
+    data[i].weight = vertice.weight;
+    while (i != 0 && data[parent(i)] > data[i]) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+  };
+  void delete_elem(Vertice vertice){
+    auto i = vert_map[vertice.id];
+    while (i != 0) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+    pop();
   }
   void emplace(size_t id, int weight) override {
-
-  }
-  bool empty() override {
-
-  }
+    insert({id,weight});
+  };
+  bool empty() override { return size == 0;};
 };
 
 dijstra_return_data runDijsktra(Graph graph, size_t source, size_t goal, PriorityQueue *container);

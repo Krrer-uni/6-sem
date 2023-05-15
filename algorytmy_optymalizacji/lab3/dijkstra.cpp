@@ -37,9 +37,11 @@ int main(int argc, char *argv[]) {
     ss_sources = Filereader::readSSfile(sources);
     for(const auto & source : ss_sources->verticies){
       algorithms::PriorityQueue* pq = new algorithms::DialPriorityQueue(1000);
-//      algorithms::PriorityQueue* pq = new algorithms::StdPriorityQueue();
+      algorithms::PriorityQueue* dpq = new algorithms::StdPriorityQueue();
+      algorithms::PriorityQueue* rhpq = new algorithms::RadixHeap(20,20);
+      algorithms::PriorityQueue* bh = new algorithms::BinaryHeap(7);
 
-      auto result = algorithms::runDijsktra(*graph, source,0,pq);
+      auto result = algorithms::runDijsktra(*graph, source,0,bh);
       results.push_back(result);
       std::cout << "source: " + std::to_string(source) + " " << result.toString() << std::endl;
       delete pq;
