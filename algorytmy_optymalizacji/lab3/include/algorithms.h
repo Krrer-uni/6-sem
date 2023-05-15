@@ -13,6 +13,9 @@
 #include "graph_utill.h"
 
 namespace algorithms {
+class BinaryHeap;
+
+
 struct dijstra_return_data {
   size_t verticies;
   size_t edges;
@@ -49,6 +52,98 @@ class PriorityQueue {
   virtual void decrease_key(Vertice vertice) {};
   virtual void emplace(size_t id, int weight) {};
   virtual bool empty() {};
+};
+
+class BinaryHeap : public PriorityQueue {
+ private:
+  std::unordered_map<size_t, size_t> vert_map;
+  size_t capacity;
+  size_t parent(size_t i) { return (i - 1) / 2; }
+
+  size_t left(size_t i) { return (2 * i + 1); }
+
+  size_t right(size_t i) { return (2 * i + 2); }
+
+  void heapify(size_t i) {
+    size_t l = left(i);
+    size_t r = right(i);
+    size_t smallest = i;
+    if (l < size && data[l] < data[i])
+      smallest = l;
+    if (r < size && data[r] < data[smallest])
+      smallest = r;
+    if (smallest != i) {
+      std::swap(data[i], data[smallest]);
+      std::swap(vert_map[data[i].id], vert_map[data[smallest].id]);
+
+      heapify(smallest);
+    }
+  }
+
+ public:
+  std::vector<Vertice> data;
+
+  explicit BinaryHeap(size_t capacity) {
+    this->capacity = capacity;
+    this->size = 0;
+    data = std::vector<Vertice>(capacity);
+//    vert_map = std::unordered_map<size_t ,size_t >();
+  }
+
+  void insert(Vertice vertice) override {
+    size_t i = size;
+    size++;
+    data[i] = vertice;
+    vert_map[vertice.id] = i;
+    while (i != 0 && data[parent(i)] > data[i]) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+  };
+
+  Vertice pop() override {
+    if (size == 1) {
+      size--;
+      return data[0];
+    }
+
+    Vertice root = data[0];
+    vert_map.erase(data[0].id);
+
+    data[0] = data[size - 1];
+    vert_map[data[0].id] = 0;
+    size--;
+    heapify(0);
+
+    return root;
+  };
+
+  void decrease_key(Vertice vertice) override {
+    assert(vert_map.contains(vertice.id));
+    auto i = vert_map[vertice.id];
+    if (data[i].weight < vertice.weight)
+      return;
+    data[i].weight = vertice.weight;
+    while (i != 0 && data[parent(i)] > data[i]) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+  };
+  void delete_elem(Vertice vertice){
+    auto i = vert_map[vertice.id];
+    while (i != 0) {
+      std::swap(data[i], data[parent(i)]);
+      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
+      i = parent(i);
+    }
+    pop();
+  }
+  void emplace(size_t id, int weight) override {
+    insert({id,weight});
+  };
+  bool empty() override { return size == 0;};
 };
 
 class StdPriorityQueue : public PriorityQueue {
@@ -156,23 +251,29 @@ class RadixHeap : public PriorityQueue {
   struct container {
     size_t lower_bound;
     size_t upper_bound;
-    std::list<Vertice> data = std::list<Vertice>();
+    BinaryHeap data ;
     bool empty() const {
-      return data.empty();
+      return data.size == 0;
     }
     void erase(size_t id) {
-      std::erase_if(data, [id](Vertice vert) { return vert.id == id; });
+      data.delete_elem({id,0});
     }
 
     Vertice top() {
-      class vertcompare {
-       public:
-        bool operator()(Vertice a, Vertice b) {
-          return a.weight < b.weight;
-        };
-      };
-      data.sort(vertcompare());
-      return data.front();
+      return data.data[0];
+    }
+
+    Vertice pop(){
+      return data.pop();
+    }
+
+    void push(Vertice vertice){
+      data.insert(vertice);
+    }
+
+    void clear(){
+      data.data.clear();
+      data.size = 0;
     }
   };
 
@@ -181,7 +282,7 @@ class RadixHeap : public PriorityQueue {
       return vertice.weight >= c.lower_bound && vertice.weight <= c.upper_bound;
     });
     assert(x != containers.end());
-    x->data.push_front(vertice);
+    x->push(vertice);
   }
 
   std::unordered_map<size_t, int> vert_weights;
@@ -196,7 +297,7 @@ class RadixHeap : public PriorityQueue {
     this->cont_pos = 0;
     this->cont_size = (size_t) (std::log2(C * n) + 1);
     this->size = 0;
-    containers = std::vector<container>(cont_size);
+    containers = std::vector<container>(cont_size,{.data = BinaryHeap(n)});
     containers[0].lower_bound = containers[0].upper_bound = 0;
     containers[1].lower_bound = containers[1].upper_bound = 1;
     for (auto x = containers.begin() + 1; x < containers.end(); x++) {
@@ -253,14 +354,14 @@ class RadixHeap : public PriorityQueue {
         i++;
       }
 
-      for (const auto &elem : containers[curr_cont].data) {
-        put(elem);
+      for (int j = 0; j < containers[curr_cont].data.size; j++) {
+        put(containers[curr_cont].data.data[j]);
       }
-      containers[curr_cont].data.clear();
+      containers[curr_cont].clear();
       curr_cont = 0;
     }
-    auto elem = containers[curr_cont].data.front();
-    containers[curr_cont].data.pop_front();
+    auto elem = containers[curr_cont].pop();
+
     return elem;
   }
 
@@ -269,7 +370,7 @@ class RadixHeap : public PriorityQueue {
     if (vert_weights.at(vertice.id) < vertice.weight)
       return;
     int past_weight = vert_weights.at(vertice.id);
-    auto x = std::find_if(containers.begin(), containers.end(), [past_weight](const container &c) {
+    auto x = std::find_if(containers.begin(), containers.end(), [ past_weight](const container &c) {
       return past_weight >= c.lower_bound && past_weight <= c.upper_bound;
     });
     x->erase(vertice.id);
@@ -287,97 +388,6 @@ class RadixHeap : public PriorityQueue {
   }
 };
 
-class BinaryHeap : public PriorityQueue {
- private:
-  std::unordered_map<size_t, size_t> vert_map;
-  size_t capacity;
-  std::vector<Vertice> data;
-  size_t parent(size_t i) { return (i - 1) / 2; }
-
-  size_t left(size_t i) { return (2 * i + 1); }
-
-  size_t right(size_t i) { return (2 * i + 2); }
-
-  void heapify(size_t i) {
-    size_t l = left(i);
-    size_t r = right(i);
-    size_t smallest = i;
-    if (l < size && data[l] < data[i])
-      smallest = l;
-    if (r < size && data[r] < data[smallest])
-      smallest = r;
-    if (smallest != i) {
-      std::swap(data[i], data[smallest]);
-      std::swap(vert_map[data[i].id], vert_map[data[smallest].id]);
-
-      heapify(smallest);
-    }
-  }
-
- public:
-
-  explicit BinaryHeap(size_t capacity) {
-    this->capacity = capacity;
-    this->size = 0;
-    data = std::vector<Vertice>(capacity);
-//    vert_map = std::unordered_map<size_t ,size_t >();
-  }
-
-  void insert(Vertice vertice) override {
-    size_t i = size;
-    size++;
-    data[i] = vertice;
-    vert_map[vertice.id] = i;
-    while (i != 0 && data[parent(i)] > data[i]) {
-      std::swap(data[i], data[parent(i)]);
-      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
-      i = parent(i);
-    }
-  };
-
-  Vertice pop() override {
-    if (size == 1) {
-      size--;
-      return data[0];
-    }
-
-    Vertice root = data[0];
-    vert_map.erase(data[0].id);
-
-    data[0] = data[size - 1];
-    vert_map[data[0].id] = 0;
-    size--;
-    heapify(0);
-
-    return root;
-  };
-
-  void decrease_key(Vertice vertice) override {
-    assert(vert_map.contains(vertice.id));
-    auto i = vert_map[vertice.id];
-    if (data[i].weight < vertice.weight)
-      return;
-    data[i].weight = vertice.weight;
-    while (i != 0 && data[parent(i)] > data[i]) {
-      std::swap(data[i], data[parent(i)]);
-      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
-      i = parent(i);
-    }
-  };
-  void delete_elem(Vertice vertice){
-    auto i = vert_map[vertice.id];
-    while (i != 0) {
-      std::swap(data[i], data[parent(i)]);
-      std::swap(vert_map[data[i].id], vert_map[data[parent(i)].id]);
-      i = parent(i);
-    }
-    pop();
-  }
-  void emplace(size_t id, int weight) override {
-    insert({id,weight});
-  };
-  bool empty() override { return size == 0;};
-};
 
 dijstra_return_data runDijsktra(Graph graph, size_t source, size_t goal, PriorityQueue *container);
 }

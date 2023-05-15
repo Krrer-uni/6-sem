@@ -41,7 +41,7 @@ int main(int argc, char *argv[]) {
       algorithms::PriorityQueue* rhpq = new algorithms::RadixHeap(20,20);
       algorithms::PriorityQueue* bh = new algorithms::BinaryHeap(7);
 
-      auto result = algorithms::runDijsktra(*graph, source,0,bh);
+      auto result = algorithms::runDijsktra(*graph, source,0,rhpq);
       results.push_back(result);
       std::cout << "source: " + std::to_string(source) + " " << result.toString() << std::endl;
       delete pq;
