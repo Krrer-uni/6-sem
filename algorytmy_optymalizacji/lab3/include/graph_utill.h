@@ -19,7 +19,10 @@ class Graph{
   const size_t verticies_size;
   bool isDirected;
 
+
  public:
+  int max_edge;
+  int min_edge;
   graph_edges verticies;
   Graph(size_t verticies_size, bool isDirected);
   void addEdge(size_t source, size_t dest, int cost);

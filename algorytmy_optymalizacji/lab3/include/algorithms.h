@@ -15,17 +15,15 @@
 namespace algorithms {
 class BinaryHeap;
 
-
 struct dijstra_return_data {
   size_t verticies;
   size_t edges;
   int lowest_cost;
   int highest_cost;
-  union {
-    double time;
-    int path;
-  } info;
-
+  double time;
+  int path;
+  size_t source = 0;
+  size_t dest = 0;
   std::string toString() {
     return "verticies: [" + std::to_string(verticies) + "] edges: [" + std::to_string(edges) +
         "] lowest: [" + std::to_string(lowest_cost) + "] highest: [" + std::to_string(highest_cost)
@@ -47,6 +45,7 @@ class PriorityQueue {
     }
   };
   size_t size;
+  virtual ~PriorityQueue() = default;
   virtual void insert(Vertice vertice) {};
   virtual Vertice pop() {};
   virtual void decrease_key(Vertice vertice) {};
@@ -131,7 +130,7 @@ class BinaryHeap : public PriorityQueue {
       i = parent(i);
     }
   };
-  void delete_elem(Vertice vertice){
+  void delete_elem(Vertice vertice) {
     auto i = vert_map[vertice.id];
     while (i != 0) {
       std::swap(data[i], data[parent(i)]);
@@ -141,9 +140,9 @@ class BinaryHeap : public PriorityQueue {
     pop();
   }
   void emplace(size_t id, int weight) override {
-    insert({id,weight});
+    insert({id, weight});
   };
-  bool empty() override { return size == 0;};
+  bool empty() override { return size == 0; };
 };
 
 class StdPriorityQueue : public PriorityQueue {
@@ -207,7 +206,7 @@ class DialPriorityQueue : public PriorityQueue {
       size++;
       verticies_bank.insert({vertice.id,
                              DialVertice{.vertice = vertice.id, .tag = vertice.weight}});
-      auto cont_id = (vertice.weight) % (C + 1);
+      auto cont_id = (vertice.weight) % (C);
       containers[cont_id].push_front(vertice.id);
       verticies_bank[vertice.id].self = containers[cont_id].begin();
     } else
@@ -215,12 +214,12 @@ class DialPriorityQueue : public PriorityQueue {
   }
   Vertice pop() override {
     size--;
-    while (containers[current_elem % (C + 1)].empty()) {
+    while (containers[current_elem % (C )].empty()) {
       current_elem++;
     }
-    assert(!containers[current_elem % (C + 1)].empty());
-    size_t elem = containers[current_elem % (C + 1)].front();
-    containers[current_elem % (C + 1)].pop_front();
+    assert(!containers[current_elem % (C)].empty());
+    size_t elem = containers[current_elem % (C)].front();
+    containers[current_elem % (C)].pop_front();
     verticies_bank[elem].finilized = true;
 
     return {elem, verticies_bank[elem].tag};
@@ -235,10 +234,10 @@ class DialPriorityQueue : public PriorityQueue {
     if (elem.tag < tag) {
       return;
     }
-    containers[elem.tag % (C + 1)].erase(elem.self);
-    containers[tag % (C + 1)].push_front(id);
+    containers[elem.tag % (C)].erase(elem.self);
+    containers[tag % (C)].push_front(id);
     elem.tag = tag;
-    elem.self = containers[tag % (C + 1)].begin();
+    elem.self = containers[tag % (C)].begin();
   }
 
   bool empty() override {
@@ -251,27 +250,27 @@ class RadixHeap : public PriorityQueue {
   struct container {
     size_t lower_bound;
     size_t upper_bound;
-    BinaryHeap data ;
+    BinaryHeap data;
     bool empty() const {
       return data.size == 0;
     }
     void erase(size_t id) {
-      data.delete_elem({id,0});
+      data.delete_elem({id, 0});
     }
 
     Vertice top() {
       return data.data[0];
     }
 
-    Vertice pop(){
+    Vertice pop() {
       return data.pop();
     }
 
-    void push(Vertice vertice){
+    void push(Vertice vertice) {
       data.insert(vertice);
     }
 
-    void clear(){
+    void clear() {
       data.data.clear();
       data.size = 0;
     }
@@ -297,7 +296,7 @@ class RadixHeap : public PriorityQueue {
     this->cont_pos = 0;
     this->cont_size = (size_t) (std::log2(C * n) + 1);
     this->size = 0;
-    containers = std::vector<container>(cont_size,{.data = BinaryHeap(n)});
+    containers = std::vector<container>(cont_size, {.data = BinaryHeap(n)});
     containers[0].lower_bound = containers[0].upper_bound = 0;
     containers[1].lower_bound = containers[1].upper_bound = 1;
     for (auto x = containers.begin() + 1; x < containers.end(); x++) {
@@ -370,7 +369,7 @@ class RadixHeap : public PriorityQueue {
     if (vert_weights.at(vertice.id) < vertice.weight)
       return;
     int past_weight = vert_weights.at(vertice.id);
-    auto x = std::find_if(containers.begin(), containers.end(), [ past_weight](const container &c) {
+    auto x = std::find_if(containers.begin(), containers.end(), [past_weight](const container &c) {
       return past_weight >= c.lower_bound && past_weight <= c.upper_bound;
     });
     x->erase(vertice.id);
@@ -388,7 +387,6 @@ class RadixHeap : public PriorityQueue {
   }
 };
 
-
-dijstra_return_data runDijsktra(Graph graph, size_t source, size_t goal, PriorityQueue *container);
+dijstra_return_data runDijsktra(Graph graph, size_t source, size_t goal, std::unique_ptr<PriorityQueue> &container);
 }
 #endif //LAB3_SRC_ALGORITHMS_H_

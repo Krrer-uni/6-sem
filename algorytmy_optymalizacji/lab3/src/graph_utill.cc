@@ -6,10 +6,14 @@
 Graph::Graph(size_t verticies_size, bool isDirected) :
     verticies_size(verticies_size),
     verticies(verticies_size+1),
-    isDirected(isDirected) {}
+    isDirected(isDirected),
+    max_edge(INT32_MIN),
+    min_edge(INT32_MAX){}
 
 void Graph::addEdge(size_t source, size_t dest, int cost) {
   verticies[source].emplace_back(dest, cost);
+  max_edge = std::max(max_edge,cost);
+  min_edge = std::min(min_edge,cost);
   if(!isDirected){
     verticies[dest].emplace_back(source,cost);
   }
