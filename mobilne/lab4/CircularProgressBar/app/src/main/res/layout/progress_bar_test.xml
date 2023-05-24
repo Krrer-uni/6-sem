@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <com.mobilki.circularprogressbar.CircularProgressBar
+        android:id="@+id/custom_progress_bar"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_gravity="center"
+        android:layout_margin="100dp"
+        app:backgroundThickness="13dp"
+        app:foregroundThickness="13dp"
+        app:foregroundColor="@color/teal_200"
+        app:max="100"
+        app:min="0"
+        app:progress="34" />
+
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
+
+</LinearLayout>
