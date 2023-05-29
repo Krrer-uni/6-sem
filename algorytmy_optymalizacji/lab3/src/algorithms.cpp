@@ -11,7 +11,7 @@ dijstra_return_data runDijsktra(Graph graph, size_t source, size_t goal, std::un
     PriorityQueue> &container) {
   std::unordered_map<size_t, int> explored;
   std::vector<bool> visited(graph.verticies.size(), false);
-
+  explored.reserve(graph.getSize());
   container->insert({source, 0});
   visited[source] = true;
 

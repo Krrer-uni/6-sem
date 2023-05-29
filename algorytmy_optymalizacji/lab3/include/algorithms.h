@@ -91,6 +91,15 @@ class BinaryHeap : public PriorityQueue {
 
   void insert(Vertice vertice) override {
     size_t i = size;
+//    if(i == data.capacity()){
+//      data.push_back(vertice);
+//    }else{
+//      data[i] = vertice;
+//    }
+//    if(size == data.capacity()){
+//      data.push_back({0,0});
+//    }
+
     size++;
     data[i] = vertice;
     vert_map[vertice.id] = i;
@@ -112,6 +121,7 @@ class BinaryHeap : public PriorityQueue {
 
     data[0] = data[size - 1];
     vert_map[data[0].id] = 0;
+//    vert_map.erase(data[0].id);
     size--;
     heapify(0);
 
@@ -195,11 +205,12 @@ class DialPriorityQueue : public PriorityQueue {
   std::unordered_map<size_t, DialVertice> verticies_bank;
 
  public:
-  DialPriorityQueue(size_t C) {
+  DialPriorityQueue(size_t C, size_t n) {
     this->size = 0;
     this->current_elem = 0;
     this->C = C + 1;
     containers = std::vector<std::list<size_t>>(C + 1);
+    verticies_bank.reserve(n);
   }
   void insert(algorithms::PriorityQueue::Vertice vertice) override {
     if (!verticies_bank.contains(vertice.id)) {
@@ -296,6 +307,7 @@ class RadixHeap : public PriorityQueue {
     this->cont_pos = 0;
     this->cont_size = (size_t) (std::log2(C * n) + 1);
     this->size = 0;
+    vert_weights.reserve(n);
     containers = std::vector<container>(cont_size, {.data = BinaryHeap(n)});
     containers[0].lower_bound = containers[0].upper_bound = 0;
     containers[1].lower_bound = containers[1].upper_bound = 1;
@@ -306,7 +318,7 @@ class RadixHeap : public PriorityQueue {
   }
 
   void insert(Vertice vertice) override {
-    assert(!vert_weights.contains(vertice.id));
+//    assert(!vert_weights.contains(vertice.id));
     size++;
     put(vertice);
     vert_weights.insert({vertice.id, vertice.weight});
@@ -366,14 +378,19 @@ class RadixHeap : public PriorityQueue {
 
   void decrease_key(Vertice vertice) override {
     assert(vert_weights.contains(vertice.id));
-    if (vert_weights.at(vertice.id) < vertice.weight)
+    auto vert_weight = vert_weights.at(vertice.id);
+    if (vert_weight < vertice.weight)
       return;
-    int past_weight = vert_weights.at(vertice.id);
+    int past_weight = vert_weight;
     auto x = std::find_if(containers.begin(), containers.end(), [past_weight](const container &c) {
       return past_weight >= c.lower_bound && past_weight <= c.upper_bound;
     });
-    x->erase(vertice.id);
-    put(vertice);
+    if(x->upper_bound >= vertice.weight && x->lower_bound <= vertice.weight){
+      x->data.decrease_key(vertice);
+    } else{
+      x->erase(vertice.id);
+      put(vertice);
+    }
     vert_weights[vertice.id] = vertice.weight;
 
   }

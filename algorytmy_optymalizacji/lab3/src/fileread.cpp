@@ -148,6 +148,7 @@ void Filereader::writeP2PResult(const std::string &filename,
       + std::to_string(results.front().edges) + " "
       + std::to_string(results.front().lowest_cost) + " "
       + std::to_string(results.front().highest_cost) + "\n";
+  opFile << graph_data;
   for (const auto &result : results) {
     auto result_line = "d " + std::to_string(result.source) + " "
         + std::to_string(result.dest) + " "
@@ -173,6 +174,7 @@ void Filereader::writeSSResult(const std::string &filename,
       + std::to_string(results.front().lowest_cost) + " "
       + std::to_string(results.front().highest_cost) + "\n";
   double time = 0.0;
+  opFile << graph_data;
   for (const auto &result : results) {
     time += result.time;
   }

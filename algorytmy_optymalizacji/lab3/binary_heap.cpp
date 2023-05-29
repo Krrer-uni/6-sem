@@ -26,7 +26,9 @@ int main(int argc, char *argv[]) {
       continue;
     }
     if (strcmp(argv[i], "-oss") == 0 || strcmp(argv[i], "-op2p") == 0) {
+
       output = argv[++i];
+      output  += "_bh";
       continue;
     }
   }
@@ -35,17 +37,16 @@ int main(int argc, char *argv[]) {
   std::vector<algorithms::dijstra_return_data> results;
   if (is_ss) {
     ss_sources = Filereader::readSSfile(sources);
-
     for (const auto &source : ss_sources->verticies) {
       auto start = std::chrono::high_resolution_clock::now();
 
       //      std::unique_ptr<algorithms::PriorityQueue> pq = std::make_unique<algorithms::DialPriorityQueue>(graph->max_edge);
       //      std::unique_ptr<algorithms::PriorityQueue> dpq = std::make_unique<algorithms::StdPriorityQueue>();
-      std::unique_ptr<algorithms::PriorityQueue>
-          rhpq = std::make_unique<algorithms::RadixHeap>(graph->max_edge, graph->getSize());
-      //      std::unique_ptr<algorithms::PriorityQueue> bh = std::make_unique<algorithms::BinaryHeap>(graph->getSize());
+//      std::unique_ptr<algorithms::PriorityQueue>
+//          rhpq = std::make_unique<algorithms::RadixHeap>(graph->max_edge, graph->getSize());
+            std::unique_ptr<algorithms::PriorityQueue> bh = std::make_unique<algorithms::BinaryHeap>(graph->getSize());
 
-      auto result = algorithms::runDijsktra(*graph, source, 0, rhpq);
+      auto result = algorithms::runDijsktra(*graph, source, 0, bh);
       auto stop = std::chrono::high_resolution_clock::now();
       result.time = std::chrono::duration_cast<std::chrono::microseconds>(stop - start).count() / 1000000.0 ;
       results.push_back(result);
@@ -56,13 +57,9 @@ int main(int argc, char *argv[]) {
   } else if (is_p2p) {
     p2p_sources = Filereader::readP2Pfile(sources);
     for (const auto &[source, dest] : p2p_sources->search_pairs) {
-//      std::unique_ptr<algorithms::PriorityQueue> pq = std::make_unique<algorithms::DialPriorityQueue>(graph->max_edge);
-//      std::unique_ptr<algorithms::PriorityQueue> dpq = std::make_unique<algorithms::StdPriorityQueue>();
-      std::unique_ptr<algorithms::PriorityQueue>
-          rhpq = std::make_unique<algorithms::RadixHeap>(graph->max_edge, graph->getSize());
-//      std::unique_ptr<algorithms::PriorityQueue> bh = std::make_unique<algorithms::BinaryHeap>(graph->getSize());
+      std::unique_ptr<algorithms::PriorityQueue> bh = std::make_unique<algorithms::BinaryHeap>(graph->getSize());
 
-      auto result = algorithms::runDijsktra(*graph, source, dest, rhpq);
+      auto result = algorithms::runDijsktra(*graph, source, dest, bh);
       results.push_back(result);
       std::cout
           << "source: " + std::to_string(source) + " dest: " + std::to_string(dest) + " distance: "
@@ -74,6 +71,6 @@ int main(int argc, char *argv[]) {
     return -1;
   }
 
-  std::cout << "Hello, World!" << std::endl;
+  std::cout << "Finished" << std::endl;
   return 0;
 }
