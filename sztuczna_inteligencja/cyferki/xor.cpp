@@ -12,7 +12,7 @@ private:
     std::array<std::array<double,4>,3> first_layer_weights; // node, input + bias
     std::array<std::array<double,2>,5> second_layer_weights; // node, input + bias
     std::array<double,4> hidden_layer;
-
+    double l_rate = 0.1;
 public:
 
     double (*loss_func)(Output, Output) = [](Output a, Output b){
@@ -20,8 +20,12 @@ public:
         auto [j,k] = b;
         return ((x-j)*(x-j) + (y-k)*(y-k))/2; 
     };
+    double (*loss_der)(double, double) = [](double tag, double pred ){
+        return 2.0 * (tag - pred);}; 
 
     double (*trig_func)(double) = [](double a){return std::max(a,0.0);}; //ReLU
+    double (*trig_der)(double) = [](double a){ if(a <= 0)   return 0.0; else return 1.0;};
+
     Output propagate(double x, double y);
     Output learn(double x, double y, double label);
     void back_propagate(Output);
@@ -44,11 +48,25 @@ Output NNetwork::propagate(double x, double y)
     }
     return {output[0], output[1]};
 }
-
+// label[0] - 1,3 ćwiartka 
+// label[1] - 2,4 ćwiartka
 Output NNetwork::learn(double x, double y, double label)
 {
-    auto out = propagate(x,y);
-    auto loss = loss_func(out,{1.0-label,label});
+    double tag[] = {1.0-label,label};
+    auto [o1,o2] = propagate(x,y);
+    double out[] = {o1,o2};
+    auto loss = loss_func({o1,o2},{1.0-label,label});
+
+    std::array<std::array<double,2>,5> sl_bp;
+    for(int i = 0; i < 2 ; i++){
+        for(int j = 0; j < 4; j++){
+            sl_bp[j][i] = l_rate * loss_der(tag[i],out[i]) * trig_der(hidden_layer[j]) * hidden_layer[j];
+            second_layer_weights[j][i] -= sl_bp[j][i];
+        }
+        sl_bp[i][4] = l_rate * loss_der(tag[i],out[i]) * trig_der(hidden_layer[5]);
+        second_layer_weights[4][i] -= sl_bp[4][i];
+    }
+    
 
     return {1.0 -loss, loss};
 }
