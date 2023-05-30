@@ -1,29 +1,56 @@
 #include <iostream>
 #include <array>
 #include <random>
+#include <tuple>
 // #define twodim(x,y) 
+
+typedef std::tuple<double,double> Output; 
 class NNetwork
 {
 private:
 
-    std::array<std::array<double,4>,2> first_layer_weights; // input, layer
-    std::array<std::array<double,2>,4> second_layer_weights;
+    std::array<std::array<double,4>,3> first_layer_weights; // node, input + bias
+    std::array<std::array<double,2>,5> second_layer_weights; // node, input + bias
     std::array<double,4> hidden_layer;
+
 public:
 
+    double (*loss_func)(Output, Output) = [](Output a, Output b){
+        auto [x,y] = a;
+        auto [j,k] = b;
+        return ((x-j)*(x-j) + (y-k)*(y-k))/2; 
+    };
 
-    int calculate(double x, double y);
-    
+    double (*trig_func)(double) = [](double a){return std::max(a,0.0);}; //ReLU
+    Output propagate(double x, double y);
+    Output learn(double x, double y, double label);
+    void back_propagate(Output);
     NNetwork(/* args */);
     ~NNetwork();
 };
 
-int NNetwork::calculate(double x, double y)
+Output NNetwork::propagate(double x, double y)
 {
+    double output[2];
     for(int i = 0; i < 4; i++){
-        hidden_layer[i] = x * first_layer_weights[0][i] + y * first_layer_weights[1][i];
+        hidden_layer[i] = trig_func(x * first_layer_weights[0][i] + y * first_layer_weights[1][i] + first_layer_weights[2][i]);
     }
-    
+    for(int i = 0; i < 2; i++){
+        output[i] = trig_func(   hidden_layer[0] * second_layer_weights[i][0] + 
+                            hidden_layer[1] * second_layer_weights[i][1] +
+                            hidden_layer[2] * second_layer_weights[i][2] +
+                            hidden_layer[3] * second_layer_weights[i][3] +
+                            second_layer_weights[i][4]);
+    }
+    return {output[0], output[1]};
+}
+
+Output NNetwork::learn(double x, double y, double label)
+{
+    auto out = propagate(x,y);
+    auto loss = loss_func(out,{1.0-label,label});
+
+    return {1.0 -loss, loss};
 }
 
 NNetwork::NNetwork(/* args */)
