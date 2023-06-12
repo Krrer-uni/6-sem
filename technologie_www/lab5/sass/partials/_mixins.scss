@@ -1,0 +1,23 @@
+//==================================================
+// Domieszka do określania rozmiarów elementu 
+//(jeden argument daje w pionie i poziomie tą samą wartość) by Anna Lauks-Dudka
+//==================================================
+
+@mixin size($width, $height: $width) {
+    width: $width;
+    height: $height;
+  }
+
+  //===================================================
+// Domieszka do zgenerowania zapytań medialnych by Anna Lauks-Dudka
+//===================================================
+
+@mixin mq($canvas) {
+    @if map-has-key($breakpoints, $canvas) {
+      @media only screen and (min-width: map-get($breakpoints, $canvas)) {
+        @content;    
+      }
+    }
+  }
+  
+  

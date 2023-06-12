@@ -1,0 +1,114 @@
+header{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    width: auto;
+    padding: 1rem 0px 0px 0px;
+    transition: 0.3s;
+
+    @include mq(medium){
+        flex-direction: row;
+        height: auto;
+        align-items: stretch;
+    }
+
+    .nav-links{
+        display: flex;
+        justify-content: space-around;
+        align-items: stretch;
+        list-style: none;
+        background: $nav-color;
+        @include mq(medium){
+            flex-direction: row;
+            padding: 0;
+            flex: 1;
+        }
+
+    
+        .nav-link{
+            
+            text-align: center;
+            align-self: stretch;
+            vertical-align: middle;
+            font-size: 2rem;
+            display: none;
+            text-decoration: none;
+            flex: 1;
+            color: $nav-link-font-color;
+            &:hover{
+                color: $nav-hover-color
+            }
+            @include mq(medium){
+                display: block;
+                font-size: 1.4rem;
+                padding: 10%  0 0 0;
+            }
+        }
+    }
+
+    .nav-links.responsive{
+        flex-direction: column;
+        background-color: $foooter-main-color;
+        position: fixed;
+        width: 100vw;
+        top: 0rem;
+        border-radius: 0rem 0rem 1rem 1rem;
+        .nav-link{
+            padding: 0.5rem;
+            display: block;
+        }
+        .hamburger{
+            position: relative;
+            top: 0rem;
+             right: 0rem;    
+            width: 100vw;
+            align-self: center;
+            margin: 0rem;
+        }
+    }
+
+    .hamburger{
+        position: fixed;
+        z-index: 100;
+        display: block;
+        
+        top: 1rem;
+        right: 1rem;
+        size: 2rem 2rem;
+        padding: 14px;
+
+        border-width: 0px;
+        border-radius: 1rem;
+        text-decoration: none;
+        
+        background-color: $foooter-main-color;
+        color: $nav-color;
+
+        font-size: 30px;
+        
+        @include mq(medium){
+            display: none;
+          
+        }
+    }
+}
+
+.logo-containter{
+    display: flex;
+    text-align: end;
+
+    @include mq(medium){
+        font-size: larger;
+        flex: 1;
+    }
+
+    h1 {
+        margin: 4vw;
+        flex: 1;
+    }
+    h2{
+        margin: 4vw;
+        text-align: start;
+        flex: 1;
+    }
+}

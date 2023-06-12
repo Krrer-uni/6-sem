@@ -1,0 +1,19 @@
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "monserrat", "sans-serif", "monospace";
+  }
+  
+  
+  @font-face {
+    font-family: 'monserrat';
+    src: url(../res/Montserrat-Regular.otf);
+  }
+
+  body{
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
