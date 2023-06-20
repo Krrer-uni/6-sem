@@ -42,14 +42,7 @@ int main() {
     results_time.push_back(k_results_time);
   }
 
-//  for (int a = 0; a < g.getSize(); a++) {
-//    std::cout << a << " - ";
-//    for(const auto& e : g.verticies[a]){
-//      if(e.second.is_back_edge) continue;
-//      std::cout << "[ " << e.first <<  ", " <<  e.second.flow << "/" << e.second.cost << "]" ;
-//    }
-//    std::cout << "\n";
-//  }
+
   std::ofstream opFile;
   opFile.open("bipartite_output.wtf");
 
