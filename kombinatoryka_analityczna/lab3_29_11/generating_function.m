@@ -1,6 +1,6 @@
-
+generating_plot(100)
 %limit_lab(100);
-complex_plot();
+%complex_plot();
 function generating_plot(order)
     syms x;
     
